@@ -41,19 +41,23 @@ add_filter(
 	function ( $gateways ) {
 		$gateways[] = new \Pronamic\WordPress\Pay\Gateways\IDeal2\Integration(
 			[
-				'id'       => 'ing-ideal-2-test',
-				'name'     => 'ING - iDEAL 2.0 - Test',
-				'mode'     => 'test',
-				'provider' => 'ing',
+				'id'            => 'ing-ideal-2-test',
+				'name'          => 'ING - iDEAL 2.0 - Test',
+				'mode'          => 'test',
+				'provider'      => 'ing',
+				'acquirer_url'  => 'https://api.sandbox.ideal-acquiring.ing.nl',
+				'ideal_hub_url' => 'https://merchant-cpsp-mtls.ext.idealapi.nl/v2',
 			]
 		);
 
 		$gateways[] = new \Pronamic\WordPress\Pay\Gateways\IDeal2\Integration(
 			[
-				'id'       => 'ing-ideal-2',
-				'name'     => 'ING - iDEAL 2.0',
-				'mode'     => 'live',
-				'provider' => 'ing',
+				'id'            => 'ing-ideal-2',
+				'name'          => 'ING - iDEAL 2.0',
+				'mode'          => 'live',
+				'provider'      => 'ing',
+				'acquirer_url'  => 'https://api.ideal-acquiring.ing.nl',
+				'ideal_hub_url' => 'https://merchant-cpsp-mtls.idealapi.nl/v2',
 			]
 		);
 

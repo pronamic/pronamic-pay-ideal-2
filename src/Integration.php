@@ -18,6 +18,20 @@ use Pronamic\WordPress\Pay\Core\Gateway as PronamicGateway;
  */
 final class Integration extends AbstractGatewayIntegration {
 	/**
+	 * Acquirer URL.
+	 * 
+	 * @var string
+	 */
+	public $acquirer_url;
+
+	/**
+	 * The iDEAL hub URL.
+	 * 
+	 * @var string
+	 */
+	public $ideal_hub_url;
+
+	/**
 	 * Construct iDEAL 2.0 integration.
 	 *
 	 * @param array<string, mixed> $args Arguments.
@@ -38,12 +52,17 @@ final class Integration extends AbstractGatewayIntegration {
 				'supports'      => [
 					'payment_status_request',
 				],
+				'acquirer_url'  => '',
+				'ideal_hub_url' => '',
 			]
 		);
 
 		parent::__construct( $args );
 
 		$this->set_mode( $args['mode'] );
+
+		$this->acquirer_url  = $args['acquirer_url'];
+		$this->ideal_hub_url = $args['ideal_hub_url'];
 	}
 
 	/**
@@ -53,6 +72,14 @@ final class Integration extends AbstractGatewayIntegration {
 	 */
 	public function get_settings_fields() {
 		$fields = parent::get_settings_fields();
+
+		$fields[] = [
+			'section'  => 'general',
+			'title'    => \__( 'Merchant ID', 'pronamic-pay-ideal-2' ),
+			'meta_key' => '_pronamic_gateway_ideal_2_merchant_id',
+			'type'     => 'text',
+			'classes'  => [ 'code' ],
+		];
 
 		return $fields;
 	}
@@ -66,7 +93,33 @@ final class Integration extends AbstractGatewayIntegration {
 	public function get_config( $post_id ) {
 		$mode = $this->get_mode();
 
-		$config = new Config();
+		$merchant_id = (string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_merchant_id' );
+
+		$config = new Config(
+			$merchant_id,
+			$this->acquirer_url,
+			new SSLContext(
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_acquirer_mtls_ssl_certificate' ),
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_acquirer_mtls_ssl_private_key' ),
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_acquirer_mtls_ssl_private_key_password' ),
+			),
+			new SSLContext(
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_acquirer_signing_ssl_certificate' ),
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_acquirer_signing_ssl_private_key' ),
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_acquirer_signing_ssl_private_key_password' ),
+			),
+			$this->ideal_hub_url,
+			new SSLContext(
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_ideal_hub_mtls_ssl_certificate' ),
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_ideal_hub_mtls_ssl_private_key' ),
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_ideal_hub_mtls_ssl_private_key_password' ),
+			),
+			new SSLContext(
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_ideal_hub_signing_ssl_certificate' ),
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_ideal_hub_signing_ssl_private_key' ),
+				(string) $this->get_meta( $post_id, '_pronamic_gateway_ideal_2_ideal_hub_signing_ssl_private_key_password' ),
+			),
+		);
 
 		return $config;
 	}
