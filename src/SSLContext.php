@@ -10,9 +10,6 @@
 
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
-use JsonSerializable;
-use Pronamic\WordPress\Pay\Core\GatewayConfig;
-
 /**
  * SSL context class
  */
