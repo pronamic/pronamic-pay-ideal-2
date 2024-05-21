@@ -18,57 +18,64 @@ use Pronamic\WordPress\Pay\Core\GatewayConfig;
  */
 final class Config extends GatewayConfig implements JsonSerializable {
 	/**
+	 * JWS algorithm.
+	 *
+	 * Only ES256 and ES384 signing algorithms are allowed by the iDEAL Hub.
+	 */
+	public string $jws_algorithm = 'ES256';
+
+	/**
 	 * Merchant ID.
-	 * 
+	 *
 	 * @var string
 	 */
 	public $merchant_id;
 
 	/**
 	 * Acquirer URL.
-	 * 
+	 *
 	 * @var string
 	 */
 	public $acquirer_url;
 
 	/**
 	 * The iDEAL hub URL.
-	 * 
+	 *
 	 * @var string
 	 */
 	public $ideal_hub_url;
 
 	/**
 	 * Acquirer MTLS SSL context.
-	 * 
+	 *
 	 * @var SSLContext
 	 */
 	public $acquirer_mtls_ssl;
 
 	/**
 	 * Acquirer signing SSL context.
-	 * 
+	 *
 	 * @var SSLContext
 	 */
 	public $acquirer_signing_ssl;
 
 	/**
 	 * The IDEAL hub MTLS SSL context.
-	 * 
+	 *
 	 * @var SSLContext
 	 */
 	public $ideal_hub_mtls_ssl;
 
 	/**
 	 * The IDEAL hub signing SSL context.
-	 * 
+	 *
 	 * @var SSLContext
 	 */
 	public $ideal_hub_signing_ssl;
 
 	/**
 	 * Construct config.
-	 * 
+	 *
 	 * @param string $merchant_id   Merchant ID.
 	 * @param string $acquirer_url  Acquirer URL.
 	 * @param string $ideal_hub_url The iDEAL hub URL.
@@ -84,10 +91,24 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	) {
 		$this->merchant_id = $merchant_id;
 
+		/**
+		 * Acquirer URL.
+		 *
+		 * @link https://ideal-portal.ing.nl/idealDeveloperPortal/access-token
+		 * @link https://api.sandbox.ideal-acquiring.ing.nl
+		 * @link https://api.ideal-acquiring.ing.nl
+		 */
 		$this->acquirer_url         = $acquirer_url;
 		$this->acquirer_mtls_ssl    = $acquirer_mtls_ssl;
 		$this->acquirer_signing_ssl = $acquirer_signing_ssl;
 
+		/**
+		 * Host names / URL's.
+		 *
+		 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417604322/Security+for+Direct+Connection#Connection-and-Security-info
+		 * @link https://merchant-cpsp-mtls.ext.idealapi.nl/v2
+		 * @link https://merchant-cpsp-mtls.idealapi.nl/v2
+		 */
 		$this->ideal_hub_url         = $ideal_hub_url;
 		$this->ideal_hub_mtls_ssl    = $ideal_hub_mtls_ssl;
 		$this->ideal_hub_signing_ssl = $ideal_hub_signing_ssl;
