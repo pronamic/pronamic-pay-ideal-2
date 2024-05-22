@@ -1,0 +1,1921 @@
+openapi: 3.0.3
+info:
+  version: "2.0.6"
+  title: iDEAL - Merchant/cPSP API
+  license:
+    name: (c) Currence. This specification is provided for review purposes only. Modifications are not allowed.
+  description: |-
+
+    The iDEAL Merchant/CPSP API is organized around REST making use of standard HTTP header authentication, response codes, and verbs.
+    The API accepts and returns JSON in the HTTP body.
+    This API allows Merchants/CPSPs to integrate with iDEAL to build and offer iDEAL Transaction and QR products.
+
+    **Authentication**
+
+    In this API authentication (and authorization) is achieved via 2 complementary means:
+
+    * All Merchants/CPSPs authenticate with the iDEAL API by providing a `JWT Access Token` in every request.
+      This token is issued and signed by the Acquirer which they have a contract with.
+    * All Merchants/CPSPs authenticate with the iDEAL API by providing the signature in the request Signature header.
+
+    **Digital Signatures**
+
+    * All requests to the iDEAL Hub must provide a `JWT Access Token` which is signed by the acquirer.
+      The use of `JWT Access Token` serves as a mechanism for authentication and authorization and guarantees
+      the integrity and validity of Merchant/CPSP identification fields that are sent to iDEAL (Merchant contract validation).
+      The `JWT Access Token` must be included in all API requests using the Authorization header.
+
+    * All requests to the iDEAL Hub are authenticated using JSON Web Signatures (JWS).
+      The use of JWS serves as a mechanism for authentication and guarantees the integrity of all requests that are sent to iDEAL.
+      The JWS must be included in all API requests using a signature header.
+      If a valid request with a correct signature is sent to iDEAL, iDEAL sends a valid response with a corresponding signature.
+
+    **TLS Encryption and Authentication**
+
+    All requests to the iDEAL Hub are encrypted using preferably TLS 1.3 or TLS 1.2 (if 1.3 is not possible) and must be made over HTTPS.
+    The TLS authentication method used must be:
+      * two-way where both the Merchant/CPSP and iDEAL Hub validate the other party to ensure that they receive data from the intended system (using TLS-MA)
+
+    To obtain TLS-MA and signing certificates, the Merchant/CPSP must generate a CSR (Certificate Signing Request) and send it to their acquirer.
+      The acquirer will request the certificate from the accesspoint on behalf of the Merchant/CPSP and should send it back to them.
+      A maximum of 5 TLS-MA/Signing certificates is allowed for each Merchant/CPSP.
+
+    The iDEAL Hub refuses any connections without TLS encryption, such as plain HTTP.
+
+    **Security Requirements**
+
+    * The request and responses are signed using a Detached JWS Signature.
+    * Algorithms for signing (selected from [RFC7518](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms)) are:
+      * ES256 (ECDSA using P-256 and SHA-256)
+      * ES384 (ECDSA using P-384 and SHA-384)
+    * All requests are authenticated by verifying the signature in the `JWT Access Token` issued by the Acquirer to the Merchant/CPSP.
+    * All requests and responses are authenticated by verifying signatures. This includes the body, path, and certain headers of each request/response.
+    * Regarding signature verification:
+      * For the signatures on `JWT Access Token`:
+        The Acquirer will share their certificates as JSON Web Key Set (JWKS) through a publicly hosted URL (on HTTPS).
+        It is expected that this configuration has already been done when the acquirer has connected to the accesspoint
+        directly. iDEAL assumes to use the same JWKS for verifying the signatures on `JWT Access Token`.
+        The Merchant/CPSP doesn't need to share a JWKS as they are not signing the `JWT Access Token`.
+      * For the signatures on the requests:
+        Merchant/CPSP must provide the leaf certificates from X.509 certificate chain as part of JWS in each request.
+        iDEAL will first verify that the certificate is issued by the same domain mentioned in `JWT Access Token` and then
+        verifies the request using the given leaf certificate.
+      * For the signatures on the responses:
+        iDEAL will share a JWKS through a publicly hosted URL (on HTTPS).
+        For ease of key exchange, Merchant/CPSP should fetch the JWKS from the specified URL frequently (at least every 1 hour) and cache the latest data.
+    * The JWK used for signature verification will be identified by the Key Id (kid) which:
+      * is part of the JWT header in requests.
+      * is part of the JSON Object Signing and Encryption (JOSE) Header of the JWS in responses.
+    * The kid MUST NOT be hardcoded in any way on either side.
+      iDEAL may use different Keys for signing each response, therefore it is important to specifically use the kid in the headers to fetch the right public key from JWKS.
+    * iDEAL includes the leaf certificate from certificate chain in x5c parameter of the JOSE header in JWS.
+    * Merchant/cPSP should only include the **leaf certificate** from certificate chain in x5c parameter of the JWS JOSE Header.
+      The leaf certificate provided by Merchant/CPSP must be signed by iDEAL platform. Self-signed certificates are not accepted.
+    * The Merchants/CPSPs must protect their private keys according to the highest security standards.
+    * The JWS must be computed as per the specifications documented.
+    * To ensure iDEAL Hub receives data from the intended system, the Merchant/CPSP must:
+      * Use TLS-MA, where both the Merchant/CPSP and iDEAL Hub validate the other party's certificate to establish the HTTPS connection.
+        To obtain a client/signing certificate, Merchants/CPSPs must create a Certificate Signing Request (CSR) and send it to their
+        acquirer. Then respectively the acquirer will get a certificate from the access point and returns it to the Merchant/CPSP.
+    * Only IPv4 is supported in this API.
+
+    **Versioning and Compatibility**
+
+    The APIs are versioned according to the [Semantic Versioning](https://semver.org/) standards.
+    In short, given a version number MAJOR.MINOR.PATCH:
+      * `MAJOR` version increments when there are backward incompatible API changes.
+      * `MINOR` version increments when functionalities are added in a backward compatible manner.
+      * `PATCH` version increments for backward compatible bug fixes and comments.
+      * Additional labels for pre-release and build metadata can be available as extensions to the MAJOR.MINOR.PATCH format.
+
+    API Compatibility Policy:
+
+    * This API follows the robustness principle: "be conservative in what you do, be liberal in what you accept from others".
+      This means that the following cases must not cause an error on iDEAL or the Merchants/CPSPs:
+      * unrecognized query parameters
+      * unrecognized headers
+      * unrecognized fields in the body
+    * Generally iDEAL will be leading on the API releases, therefore for this API, a compatible change is a change that is ***backward compatible***.
+      Merchants/CPSPs as the client, with proper implementation of a previous version, should be able to continue working if they do not upgrade their version.
+    * The following table indicates the compatibility policies for this API:
+
+
+    | **Change Description**                                                                                                                            | **Backward Compatibility** | <        |
+    | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ------------- |
+    |                                                                                                                                                   | **Requests**           | **Responses** |
+    | Adding new endpoints/methods                                                                                                                      | ✅ Compatible          | N/A           |
+    | Adding/Removing/Modifying optional fields/headers                                                                                                 | ✅ Compatible          | ✅ Compatible |
+    | Adding new required fields with default values                                                                                                    | ✅ Compatible          | ✅ Compatible |
+    | Changes to the order of fields                                                                                                                    | ✅ Compatible          | ✅ Compatible |
+    | Changes to the comments/descriptions as long as it does not change the functionality and purpose of a field (Patch version)                       | ✅ Compatible          | ✅ Compatible |
+    | Adding/Removing/Modifying the name of optional authentication/authorization mechanisms                                                            | ✅ Compatible          | ✅ Compatible |
+    | Removing/Modifying existing URIs (such as hostname, port or path)                                                                                 | ⚠️ Breaking            | N/A           |
+    | Modifying the behavior of existing authentication/authorization mechanisms (e.g. algorithm)                                                       | ⚠️ Breaking            | ⚠️ Breaking   |
+    | Adding validations for fields                                                                                                                     | ⚠️ Breaking            | ⚠️ Breaking   |
+    | Changing the structure or relationship between required fields (e.g. making an existing field a child of another field)                           | ⚠️ Breaking            | ⚠️ Breaking   |
+    | Changing the semantic and/or functionality of fields (e.g. use an existing field as a unique key)                                                    | ⚠️ Breaking            | ⚠️ Breaking   |
+    | Changing the type of fields                                                                                                                       | ⚠️ Breaking            | ⚠️ Breaking   |
+    | Removing/Modifying required fields/headers                                                                                                        | ✅ Compatible          | ⚠️ Breaking   |
+    | Removing/Modifying the name of required authentication/authorization mechanisms                                                                   | ✅ Compatible          | ⚠️ Breaking   |
+    | Changing required fields to optional fields                                                                                                       | ✅ Compatible          | ⚠️ Breaking   |
+    | Adding required fields/headers without a default value                                                                                            | ⚠️ Breaking            | ✅ Compatible |
+    | Changing validations to more limited criteria. example: changing field size from 20 to 10, the external client's/server's assumption breaks       | ⚠️ Breaking            | ✅ Compatible |
+    | Changing validations to less limited criteria. example: changing field size from 10 to 20, the external client's/server's validation layer breaks | ✅ Compatible          | ⚠️ Breaking   |
+    | Changing an optional field to a required field                                                                                                    | ⚠️ Breaking            | ✅ Compatible |
+    | Adding a new HTTP response code                                                                                                                   | N/A                    | ⚠️ Breaking   |
+    | Adding to the Enum range                                                                                                                          | ✅ Compatible          | ⚠️ Breaking   |
+    | Removing from the Enum range                                                                                                                      | ⚠️ Breaking            | ✅ Compatible |
+
+    **Timezones and Time Formats**
+
+    * All the time fields are in UTC and all parties MUST synchronize their clocks to UTC
+    * [ISODateTime standard](https://www.iso20022.org/standardsrepository/type/ISODateTime), in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ) is the basis for timestamp fields.
+
+    **Other Requirements**
+
+    * All parties must use UTF-8 character set in their requests and responses.
+    * For optional fields, null values are not permitted. If an optional value is not present, it should not be added to the request/response.
+
+    **NOTE:**
+    This API is used by Merchants/CPSPs to connect to iDEAL. iDEAL offers a different API specification for connecting Acquirers.
+tags: [ ]
+
+servers:
+  - url: https://merchant-cpsp-mtls.idealapi.nl/v2
+  - url: https://merchant-cpsp-mtls.ext.idealapi.nl/v2
+security:
+  - JWT_Access_Token: [ ]
+  - JWS-Request-Signature: [ ]
+paths:
+  "/merchant-cpsp/transactions":
+    post:
+      summary: Create a new transaction
+      description: |-
+        This endpoint is used to create an iDEAL transaction by the Merchant/CPSP.
+        In case of a non-deterministic failure (timeout, 429, or 5xx), the Merchant/CPSP should retry this endpoint once.
+
+        **Performance**
+
+        * The response time of this endpoint is as follows.
+          * 95th percentile under 700 milliseconds
+          * 99th percentile under 1400 milliseconds
+          * Maximum response time under 3000 milliseconds
+
+      operationId: createTransaction
+      tags:
+        - "transactionProcessing"
+      parameters:
+        - $ref: "#/components/parameters/Request-ID"
+        - $ref: "#/components/parameters/RequestSignature"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTransactionRequest"
+      responses:
+        "201":
+          description: Transaction Creation Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateTransactionResponse"
+          headers:
+            Request-ID:
+              $ref: "#/components/headers/Request-ID"
+            Signature:
+              $ref: "#/components/headers/ResponseSignature"
+        "400":
+          $ref: "#/components/responses/400InputError"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "405":
+          $ref: "#/components/responses/405MethodNotAllowed"
+        "422":
+          description: |-
+            **Error Codes**
+
+            * `INVALID_ACQUIRER_TOKEN` - The acquirer token is not valid
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "500":
+          $ref: "#/components/responses/500InternalServerError"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+
+  "/merchant-cpsp/transactions/{transactionId}":
+    get:
+      summary: Get transaction details
+      description: |-
+        This API is used to get the details of the transaction identified by transactionId.
+
+        Note: in IDEAL APIs, the main means of being notified about the final state of a transaction
+        is the `/transaction-callback` endpoint in `merchant-cpsp-callback-api`.
+        The Merchants/CPSPs should NOT implement a retry mechanism on this endpoint but they can try it once only in the following situations:
+        - The user ends up in the merchant environment and the final transaction state is not known (callback has not been received)
+        - The transaction exceeds its expiryPeriod and the final transaction state is not known
+        - 24 hours after transaction creation when the final transaction state is not known
+
+        In case the final state remains unknown, the Merchants/CPSPs should follow the reconciliation process.
+
+        **Performance**
+
+        * The response time of this endpoint is as follows.
+          * 95th percentile under 200 milliseconds
+          * 99th percentile under 400 milliseconds
+          * Maximum response time under 2500 milliseconds
+
+      operationId: getTransaction
+      tags:
+        - "transactionProcessing"
+      parameters:
+        - $ref: "#/components/parameters/Transaction-ID"
+        - $ref: "#/components/parameters/Request-ID"
+        - $ref: "#/components/parameters/RequestSignature"
+      responses:
+        "200":
+          description: Transaction Details Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTransactionResponse"
+          headers:
+            Request-ID:
+              $ref: "#/components/headers/Request-ID"
+            Signature:
+              $ref: "#/components/headers/ResponseSignature"
+        "400":
+          $ref: "#/components/responses/400InputError_WithoutBody"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          description: |-
+            Error codes:
+            * `TRANSACTION_NOT_FOUND` - Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          headers:
+            Request-ID:
+              $ref: "#/components/headers/Request-ID"
+            Signature:
+              $ref: "#/components/headers/ResponseSignature"
+        "405":
+          $ref: "#/components/responses/405MethodNotAllowed"
+        "422":
+          description: |-
+            **Error Codes**
+
+            * `INVALID_ACQUIRER_TOKEN` - The acquirer token is not valid
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "500":
+          $ref: "#/components/responses/500InternalServerError"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+
+  "/merchant-cpsp/debtors/{userToken}/preferences":
+    get:
+      summary: Get preferences for the debtor identified by the userToken.
+      description: |-
+        This API is used by the Merchants/CPSPs, to get the preference of the debtor identified
+        by userToken (provided in /userTokenCallback), before creating the transaction.
+
+        If the Merchant/CPSP expects to receive a preference since a userToken already exists on their side,
+        but receives a 404, then a new token can be requested by including `userTokenCallbackUrl` in `CreateTransactionRequest`.
+
+        **Performance**
+
+        * The response time of the iDEAL Merchant/CPSP APIs is as follows:
+          * 95th percentile under 200 milliseconds
+          * 99th percentile under 400 milliseconds
+          * Maximum response time under 2500 milliseconds
+
+
+      operationId: getDebtorPreferences
+      tags:
+        - "debtorPreferences"
+      parameters:
+        - $ref: "#/components/parameters/UserToken"
+        - $ref: "#/components/parameters/Request-ID"
+        - $ref: "#/components/parameters/RequestSignature"
+      responses:
+        "200":
+          description: Debtor Preferences response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetDebtorPreferencesResponse"
+          headers:
+            Request-ID:
+              $ref: "#/components/headers/Request-ID"
+            Signature:
+              $ref: "#/components/headers/ResponseSignature"
+        "400":
+          $ref: "#/components/responses/400InputError"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          description: |-
+            Error codes:
+            * `DEBTOR_NOT_FOUND` - Debtor not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          headers:
+            Request-ID:
+              $ref: "#/components/headers/Request-ID"
+            Signature:
+              $ref: "#/components/headers/ResponseSignature"
+        "405":
+          $ref: "#/components/responses/405MethodNotAllowed"
+        "422":
+          description: |-
+            **Error Codes**
+            
+            * `INVALID_ACQUIRER_TOKEN` - The acquirer token is not valid
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "500":
+          $ref: "#/components/responses/500InternalServerError"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+
+  "/merchant-cpsp/qrcodes":
+    post:
+      summary: Create a new QR Code
+      description: |-
+        This endpoint is used to create an iDEAL QR Code by the Merchant/CPSP.
+        In case of a non-deterministic failure (timeout, 429 or 5xx), the Merchant/CPSP should retry this endpoint once.
+
+        **Performance**
+
+        * The response time of this endpoint is as follows:
+          * 95th percentile under 500 milliseconds
+          * 99th percentile under 1000 milliseconds
+          * Maximum response time under 3000 milliseconds
+
+      operationId: createQRCode
+      tags:
+        - "qrCodeProcessing"
+      parameters:
+        - $ref: "#/components/parameters/Request-ID"
+        - $ref: "#/components/parameters/RequestSignature"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQRCodeRequest"
+      responses:
+        "201":
+          description: QR Code Creation Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateQRCodeResponse"
+          headers:
+            Request-ID:
+              $ref: "#/components/headers/Request-ID"
+            Signature:
+              $ref: "#/components/headers/ResponseSignature"
+        "400":
+          $ref: "#/components/responses/400InputError"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "405":
+          $ref: "#/components/responses/405MethodNotAllowed"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "500":
+          $ref: "#/components/responses/500InternalServerError"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+
+  "/merchant-cpsp/qrcodes/{qrcodeId}/cancel":
+    post:
+      summary: Cancel a QR Code
+      description: |-
+        This endpoint is used to cancel an iDEAL QR Code identified by the QRCodeID by the Merchant/CPSP.
+        In case of a non-deterministic failure (timeout, 429 or 5xx), the Merchant/CPSP should retry this endpoint.
+        This endpoint is idempotent for the same QR Code ID.
+
+        **Performance**
+
+        * The response time of this endpoint is as follows.
+          * 95th percentile under 500 milliseconds
+          * 99th percentile under 1000 milliseconds
+          * Maximum response time under 3000 milliseconds
+
+      operationId: cancelQRCode
+      tags:
+        - "qrCodeProcessing"
+      parameters:
+        - $ref: "#/components/parameters/Request-ID"
+        - $ref: "#/components/parameters/QRCode-ID"
+        - $ref: "#/components/parameters/RequestSignature"
+      responses:
+        "204":
+          description: QR Code Resource is cancelled successfully
+          headers:
+            Request-ID:
+              $ref: "#/components/headers/Request-ID"
+            Signature:
+              $ref: "#/components/headers/ResponseSignature"
+        "400":
+          $ref: "#/components/responses/400InputError"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound_QRCode"
+        "405":
+          $ref: "#/components/responses/405MethodNotAllowed"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "500":
+          $ref: "#/components/responses/500InternalServerError"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+
+  "/merchant-cpsp/qrcode":
+    get:
+      summary: Render a QR Code
+      description: |-
+        This endpoint is used to render an iDEAL QR Code by the Merchant/CPSP.
+        In case of a non-deterministic failure (timeout, 429, or 5xx), the Merchant/CPSP should retry this endpoint once.
+
+        **Performance**
+
+        * The response time of this endpoint is as follows.
+          * 95th percentile under 700 milliseconds
+          * 99th percentile under 1400 milliseconds
+          * Maximum response time under 3000 milliseconds
+
+      operationId: renderQRCode
+      tags:
+        - "qrCodeRendering"
+      parameters:
+        - $ref: '#/components/parameters/PayloadURI'
+        - $ref: '#/components/parameters/QRSize'
+        - $ref: '#/components/parameters/QRFormat'
+        - $ref: "#/components/parameters/RequestSignature"
+      responses:
+        '200':
+          description: |-
+            The body returned is a string with binary format.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: "#/components/responses/400InputError"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "405":
+          $ref: "#/components/responses/405MethodNotAllowed"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "500":
+          $ref: "#/components/responses/500InternalServerError"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+
+components:
+  securitySchemes:
+    JWT_Access_Token:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |-
+        iDEAL must verify the validity of a merchant's contract with an acquirer. The chosen solution is validation of a JWT token issued by the acquirer:
+        * Acquirer regularly provides Merchant/CPSP with a signed `JWT Access Token` containing information such as validity period and Merchant details
+        * Merchant shares the `JWT Access Token` with iDEAL Access Point in the Authorization header of every request
+        * iDEAL Access Point verifies the signature and checks the validity of the token
+        * The acquirer is in control of token validity time. However, the maximum validity period of a token must be 24 hours.
+
+        **JWT Access Token's Structure**
+        * These tokens will be issued for a specific Merchant/CPSP, meaning that the subject of the token (`sub` field in the payload) is a unique entity.
+        * The access point will validate this token via the `kid` provided in this token and the JWKS provided by the acquirer in their existing connection with iDEAL.
+        * Note that the `creditor` custom claim is a complex object which gives further information about the `sub` claim, i.e the `creditorId`.
+        * Depending on the scope, there are some fields which MUST be provided either in this token or in `POST /transactions` or `POST /qrcodes`:
+          * In case of scope:MERCHANT, the `mcc` field MUST be provided in the JWT and MUST NOT be provided in the `POST /transactions` or `POST /qrcodes`
+          * In case of scope:CPSP, the `mcc` field MUST NOT be provided in the JWT but MUST be provided in the `POST /transactions` or `POST /qrcodes`
+          * Note: if the fields are provided in the wrong place, the accesspoint will ignore them, which might result in an error.
+          * In case of scope:CPSP, `cpspSchemeId` MUST be provided in this token only
+          * In case the subject of this token is also a c2c provider, `c2cProviderSchemeId` MUST be provided in this token only
+
+        * Sample JWT:
+
+        HEADER:
+        ```json
+        {
+          "alg": "ES256",
+          "typ": "JWT",
+          "kid": "testKey"
+        }
+        ```
+
+        PAYLOAD:
+        ```json
+        {
+          "iss": "4 digit acquirerId",
+          "name": "acquirer legal entity name",
+          "iat": 1422779638,
+          "exp": 1426420800,
+          "aud": "https://merchant-cpsp-mtls.idealapi.nl/v2",
+          "jti": "unique token id",
+          "scope": "Enum (CPSP, MERCHANT)",
+          "sub": "creditorId",
+          "creditor": {
+            "domain": "www.cookie.com",
+            "name": "Cookie Holding BV",
+            "iban": "NL44RABO0123456789",
+            "bic": "INGBNL2AXXX",
+            "mcc": "5812",
+            "cpspSchemeId": "11112222",
+            "c2cProviderSchemeId": "22223333"
+          }
+        }
+        ```
+
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI0IGRpZ2l0IGFjcXVpcmVySWQiLCJuYW1lIjoiYWNxdWlyZXIgbGVnYWwgZW50aXR5IG5hbWUiLCJpYXQiOjE0MjI3Nzk2MzgsImV4cCI6MTQyNjQyMDgwMCwiYXVkIjoiaHR0cHM6Ly9tZXJjaGFudC1jcHNwLmlkZWFsYXBpLm5sL3YyIiwianRpIjoidW5pcXVlIHRva2VuIGlkIiwic2NvcGUiOiJFbnVtIChDUFNQLCBNRVJDSEFOVCkiLCJzdWIiOiJjcmVkaXRvcklkIiwiY3JlZGl0b3IiOnsiZG9tYWluIjoid3d3LmNvb2tpZS5jb20iLCJuYW1lIjoiQ29va2llIEhvbGRpbmcgQlYiLCJpYmFuIjoiTkw0NFJBQk8wMTIzNDU2Nzg5IiwiYmljIjoiSU5HQk5MMkFYWFgiLCJtY2MiOjEsImNwc3BTY2hlbWVJZCI6IjExMTEyMjIyIiwiYzJjUHJvdmlkZXJTY2hlbWVJZCI6IjIyMjIzMzMzIn19.xBUDuknvf1rz_RNKm-2EOqjfUAXpqLvMgPAXM4cPnk4"
+
+    JWS-Request-Signature:
+      name: Signature
+      type: apiKey
+      in: header
+      description: |-
+        To support request signatures the following approach is taken:
+
+        * Prerequisites:
+          * Acquirers must have added merchant/cPSP's domain address in the `JWT Access Token` (see `JWT_Access_Token`)
+          * Merchant/CPSP must have obtained a certificate for that domain, issued by iDEAL platform CA
+        * When calling the accesspoint, Merchant/CPSP signs the request (with a detached JWS) which includes only the leaf certificate from x509 cert chain in the JWS (x5c field of JOSE header)
+        * For each request, the accesspoint validates:
+          * if the `JWT Access Token` is valid using the acquirer's preconfigured JWKS. Merchant/CPSP doesn't need to do anything about this part
+          * if the certificate domain provided in the request matches the domain in the token signed by the acquirer (JWS.x5c.CN = JWT_Access_Token.creditor.domain)
+          * if JWS is valid via the provided certificate in JWS.x5c
+
+        The above-mentioned approach doesn't require keeping any signing keys for the Merchants/CPSPs on the accesspoint.
+        The security layers rely on the following facts:
+
+        * Merchant/CPSP can get a short-lived token from the acquirer, which proves that the actor is a valid Merchant/CPSP according to the acquirer
+        * The trusted acquirer confirms the domain for Merchant/CPSP by including it in the token
+        * Only the owner of that domain (Merchant/CPSP) will be able to obtain a certificate for that domain
+
+        Note: mTLS remains only as means of preventing (D)DoS attacks.
+
+        Keeping in mind the abovementioned points, this field is the [Detached JWS signature of the request](https://tools.ietf.org/html/rfc7797).
+
+        The Merchant/CPSP MUST include only the leaf Certificate from X.509 certificate chain in the [x5c parameter](https://tools.ietf.org/html/rfc7517#section-4.7) in the JOSE header. 
+
+        This certificate must have been obtained from iDEAL platform via the respective acquirer which represents the Merchant/CPSP.
+
+
+        iDEAL validates the identity of the leaf certificate to check if it truly represents the Merchant/CPSP.
+
+        The signature must be computed as following:
+
+            jws = base64URLEncode(JOSE Header)..alg(base64URLEncode(JOSE Header).base64URLEncode(Request Body))
+
+            [JOSE Header](https://tools.ietf.org/html/rfc7515#section-4) =
+
+            {
+              "typ": "jose+json",
+              "x5c": "leaf certificate for signing according to [rfc7517](https://datatracker.ietf.org/doc/html/rfc7517#section-4.7)",
+              "alg": "[ES256(ECDSA using P-256 and SHA-256. Corresponding keysize 256 bit) (https://tools.ietf.org/html/rfc7518#section-3.1)",
+              "https://idealapi.nl/sub" : "equal to `JWT_Access_Token.sub`",
+              "https://idealapi.nl/iss" : "equal to `JWT_Access_Token.sub`",
+              "https://idealapi.nl/scope" : Enum (MERCHANT,CPSP),
+              "https://idealapi.nl/acq" : "{acquirerId} as provided in in `JWT_Access_Token.iss`",
+              "https://idealapi.nl/iat" : "{Current creation date time in [ISODateTime standard](https://www.iso20022.org/standardsrepository/type/ISODateTime), expressed in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ), expressed in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ)},
+              "https://idealapi.nl/jti" : "{Request-ID}",
+              "https://idealapi.nl/token-jti" : "{jti} as provided in in `JWT_Access_Token.jti`",
+              "https://idealapi.nl/path": "request path e.g. /v2/transactions/{transaction-id}, excluding base url https://mtls-issuer.idealapi.nl"
+              "crit": ["https://idealapi.nl/sub", "https://idealapi.nl/iss", "https://idealapi.nl/acq", "https://idealapi.nl/iat", "https://idealapi.nl/jti", "https://idealapi.nl/path", "https://idealapi.nl/scope", "https://idealapi.nl/token-jti"]
+            }
+  parameters:
+    Request-ID:
+      in: header
+      name: Request-ID
+      description: |-
+        Unique request correlation id [correlating request.](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Common_non-standard_request_fields) It will be echoed back in response.
+      schema:
+        type: string
+        pattern: "^[a-zA-Z0-9-_]+$"
+        example: "u06zf2cMq-w6ciUvZ8_MeVaQ4h"
+        minLength: 1
+        maxLength: 36
+      required: true
+    RequestSignature:
+      in: header
+      name: Signature
+      description: |-
+        To support request signatures the following approach is taken:
+
+        * Prerequisites:
+          * Acquirers must have added merchant/cPSP's domain address in the `JWT Access Token` (see `JWT_Access_Token`)
+          * Merchant/CPSP must have obtained a certificate for that domain, issued by iDEAL platform CA
+        * When calling the accesspoint, Merchant/CPSP signs the request (with a detached JWS) which includes only the leaf certificate from x509 cert chain in the JWS (x5c field of JOSE header)
+        * For each request, the accesspoint validates:
+          * if the `JWT Access Token` is valid using the acquirer's preconfigured JWKS. Merchant/CPSP doesn't need to do anything about this part
+          * if the certificate domain provided in the request matches the domain in the token signed by the acquirer (JWS.x5c.CN = JWT_Access_Token.creditor.domain)
+          * if JWS is valid via the provided certificate in JWS.x5c
+
+        The above-mentioned approach doesn't require keeping any signing keys for the Merchants/CPSPs on the accesspoint.
+        The security layers rely on the following facts:
+
+        * Merchant/CPSP can get a short-lived token from the acquirer, which proves that the actor is a valid Merchant/CPSP according to the acquirer
+        * The trusted acquirer confirms the domain for Merchant/CPSP by including it in the token
+        * Only the owner of that domain (Merchant/CPSP) will be able to obtain a certificate for that domain
+
+        Note: mTLS remains only as means of preventing (D)DoS attacks.
+
+        Keeping in mind the abovementioned points, this field is the [Detached JWS signature of the request](https://tools.ietf.org/html/rfc7797).
+
+        The Merchant/CPSP MUST include only the leaf Certificate from X.509 certificate chain in the [x5c parameter](https://tools.ietf.org/html/rfc7517#section-4.7) in the JOSE header. 
+
+        This certificate must have been obtained from iDEAL platform via the respective acquirer which represents the Merchant/CPSP.
+
+
+        iDEAL validates the identity of the leaf certificate to check if it truly represents the Merchant/CPSP.
+
+        The signature must be computed as following:
+
+            jws = base64URLEncode(JOSE Header)..alg(base64URLEncode(JOSE Header).base64URLEncode(Request Body))
+
+            [JOSE Header](https://tools.ietf.org/html/rfc7515#section-4) =
+
+            {
+              "typ": "jose+json",
+              "x5c": "leaf certificate for signing according to [rfc7517](https://datatracker.ietf.org/doc/html/rfc7517#section-4.7)",
+              "alg": "[ES256(ECDSA using P-256 and SHA-256. Corresponding keysize 256 bit) (https://tools.ietf.org/html/rfc7518#section-3.1)",
+              "https://idealapi.nl/sub" : "equal to `JWT_Access_Token.sub`",
+              "https://idealapi.nl/iss" : "equal to `JWT_Access_Token.sub`",
+              "https://idealapi.nl/scope" : Enum (MERCHANT,CPSP),
+              "https://idealapi.nl/acq" : "{acquirerId} as provided in in `JWT_Access_Token.iss`",
+              "https://idealapi.nl/iat" : "{Current creation date time in [ISODateTime standard](https://www.iso20022.org/standardsrepository/type/ISODateTime), expressed in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ), expressed in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ)},
+              "https://idealapi.nl/jti" : "{Request-ID}",
+              "https://idealapi.nl/token-jti" : "{jti} as provided in in `JWT_Access_Token.jti`",
+              "https://idealapi.nl/path": "request path e.g. /v2/transactions/{transaction-id}, excluding base url https://mtls-issuer.udealapi.nl"
+              "crit": ["https://idealapi.nl/sub", "https://idealapi.nl/iss", "https://idealapi.nl/acq", "https://idealapi.nl/iat", "https://idealapi.nl/jti", "https://idealapi.nl/path", "https://idealapi.nl/scope", "https://idealapi.nl/token-jti"]
+            }
+      required: true
+      schema:
+        type: string
+    PayloadURI:
+      in: query
+      name: p
+      schema:
+        type: string
+      description: |-
+        The URI encoded PayloadURI.
+        This field is equivalent to the `p` parameter of `CreateQRCodeResponse.qrCodeUrl`
+      example: "HTTPS%3A%2F%2FQR.IDEAL.NL%2F2ALE7RYXH4RPSGTDPK2PCFNHPJUM"
+      required: true
+
+    QRSize:
+      in: query
+      name: s
+      schema:
+        type: integer
+        minimum: 3
+        maximum: 15
+        exclusiveMinimum: false
+        exclusiveMaximum: false
+        default: 3
+      description: |-
+        The scale of QR code.
+        **Note** This field only applies to the PNG image format and the number of pixels can be obtained from this option.
+        eg. If the Qr code is 53 modules wide, a size with value 3 will produce a png image with the size of 159x159.
+
+    QRFormat:
+      in: query
+      name: f
+      schema:
+        type: string
+        enum:
+          - SVG
+          - PNG
+        default: PNG
+      description: |-
+        This field is used to indicate the format of the generated QR Code.
+        | Value | Description |
+        |--------|-------------|
+        | SVG | The generated QR code will be in SVG format. |
+        | PNG | This generated QR code will be in PNG format. |
+
+    Transaction-ID:
+      in: path
+      name: transactionId
+      description: The unique numeric identifier generated by iDEAL for a transaction.
+      schema:
+        type: string
+        minLength: 16
+        maxLength: 16
+        example: "0001000000000001"
+        pattern: "[0-9]{16}"
+      required: true
+
+    QRCode-ID:
+      in: path
+      name: qrcodeId
+      description: The Unique QR Code Identifier.
+      schema:
+        type: string
+        minLength: 16
+        maxLength: 16
+        example: "8azd1y7x9qvaf2k1"
+        pattern: "[0-9a-z]{16}"
+      required: true
+
+    UserToken:
+      in: path
+      name: userToken
+      example: Z7xmaEJlB3rDLpmln9xbUlaQ
+      description: |-
+        The token of the debtor generated by iDEAL to be used in user recognition for a specific merchant.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+      required: true
+
+  schemas:
+    ErrorResponse:
+      type: object
+      title: Error Response
+      description: The standard response model returned in case of an error
+      properties:
+        code:
+          $ref: "#/components/schemas/ErrorCode"
+        message:
+          type: string
+          description: Error message
+        traceId:
+          type: string
+          description: "id that is assigned to a single request, job, or action"
+      required:
+        - code
+        - message
+    ErrorCode:
+      type: string
+      description: Error code
+      enum:
+        - TRANSACTION_NOT_FOUND
+        - DEBTOR_NOT_FOUND
+        - BODY_MISSING
+        - FIELD_IS_REQUIRED
+        - FIELD_IS_INVALID
+        - INVALID_SIGNATURE
+        - ACCESS_DENIED
+        - METHOD_NOT_ALLOWED
+        - TOO_MANY_REQUESTS
+        - TECHNICAL_ERROR
+        - SERVICE_UNAVAILABLE
+        - QRCODE_NOT_FOUND
+
+    CreateTransactionRequest:
+      type: object
+      description: |-
+        Create transaction request with all the details to create a transaction.
+        Some creditor details are sent as part of the `JWT Access token` issued by the acquirer.
+        More precisely,
+        * If `JWT Access token.scope` is `CPSP` then:
+          * The cpsp must provide `mcc` in this request and not in the `JWT Access token`.
+        * If `JWT Access token.scope` is `MERCHANT` then:
+          * The merchant must provide `mcc` in the `JWT Access token` and not in this request.
+      required:
+        - amount
+        - creditor
+        - returnUrl
+        - description
+        - reference
+      properties:
+        amount:
+          $ref: "#/components/schemas/Amount"
+        description:
+          $ref: "#/components/schemas/TransactionDescription"
+        reference:
+          $ref: "#/components/schemas/TransactionReference"
+        expirationPeriod:
+          type: integer
+          description: Time in seconds after which the transaction will expire. If not provided a default value will be used. For ONLINE - 1200 and for INSTORE - 120
+          minimum: 60
+          maximum: 3600
+          format: int64
+          exclusiveMinimum: false
+          exclusiveMaximum: false
+        transactionType:
+          $ref: "#/components/schemas/TransactionType"
+        transactionFlow:
+          $ref: "#/components/schemas/TransactionFlow"
+        creditor:
+          $ref: "#/components/schemas/CreateTransactionCreditor"
+        expectedDebtor:
+          $ref: "#/components/schemas/ExpectedDebtor"
+        requestedCheckoutDetails:
+          $ref: "#/components/schemas/RequestedCheckoutDetails"
+        mcc:
+          $ref: "#/components/schemas/MCC"
+        transactionCallbackUrl:
+          $ref: "#/components/schemas/TransactionCallbackUrl"
+        userTokenCallbackUrl:
+          $ref: "#/components/schemas/UserTokenCallbackUrl"
+        returnUrl:
+          $ref: "#/components/schemas/ReturnUrl"
+        issuerId:
+          $ref: "#/components/schemas/IssuerId"
+
+    TransactionType:
+      type: string
+      enum:
+        - ONLINE
+        - INSTORE
+        - C2C
+        - QR
+      description: |-
+        Transaction type used in this transaction.
+        * _ONLINE_ - Used particularly for Online transactions, e.g. a webshop
+        * _INSTORE_ - Used for instore transactions for eg.- a POS device
+        * _C2C_ - Used for customer-to-customer transactions, e.g. a Transaction Request
+        * _QR_ - Used for transactions from a QR. eg: Invoice
+      default: ONLINE
+
+    TransactionFlow:
+      type: string
+      enum:
+        - STANDARD
+        - FAST_CHECKOUT
+      description: |-
+        Transaction flow which the Merchant/CPSP desires to initiate.
+        * _STANDARD_ - Used for normal iDEAL transactions.
+        * _FAST_CHECKOUT_ - Used for initiating the fast checkout flow where the debtor will be requested to provide checkout details which in turn iDEAL provides them to the merchant via a callback eventually.
+      default: STANDARD
+
+    AmountCommons:
+      type: object
+      properties:
+        type:
+          type: string
+          description: |-
+            * _FIXED_ - The amount defined by the merchant can not be changed by the user
+            * _CHANGE_ - The amount defined by the merchant can be changed by the user within the defined bounds
+            * _DEFINE_ - The amount needs to be defined by the user
+          enum:
+            - FIXED
+            - CHANGE
+            - DEFINE
+          default: FIXED
+        maximum:
+          type: integer
+          format: int64
+          description: |-
+            Conditionally used for amount type CHANGE or DEFINE.
+            The value in case of CHANGE should be greater than or equal to the amount value.
+            In case of FIXED, this value will be ignored.
+          example: 10000
+          maximum: 999999999999
+          minimum: 1
+        minimum:
+          type: integer
+          format: int64
+          description: |-
+            Conditionally used for amount type CHANGE or DEFINE.
+            The value in case of CHANGE should be less than or equal to the amount.
+            In case of FIXED, this value will be ignored.
+          example: 1
+          maximum: 999999999999
+          minimum: 1
+        currency:
+          $ref: "#/components/schemas/Currency"
+
+    Amount:
+      type: object
+      allOf:
+        - type: object
+          properties:
+            amount:
+              type: integer
+              format: int64
+              description: |-
+                Amount in cents. REQUIRED field when amount type is FIXED or CHANGE
+                Corresponding to iDEAL 1.0 field 'transaction.amount' in CreateTransactionRequest
+                (Note: in iDEAL 1.0 amount is in Euros but here it is in Eurocents)
+              example: 1100
+              minimum: 1
+              maximum: 999999999999
+            breakdown:
+              $ref: "#/components/schemas/AmountBreakdown"
+        - $ref: "#/components/schemas/AmountCommons"
+
+    QRAmount:
+      type: object
+      allOf:
+        - type: object
+          properties:
+            amount:
+              type: integer
+              format: int64
+              description: |-
+                Amount in cents. REQUIRED field when amount type is FIXED or CHANGE
+              example: 1100
+              minimum: 1
+              maximum: 999999999999
+        - $ref: "#/components/schemas/AmountCommons"
+
+    AmountBreakdown:
+      type: object
+      description: |-
+        Breakdown of the transaction amount. The sum of all the fields within this breakdown must be equal
+        to the transaction amount (see `CreateTransactionRequest.amount.amount`).
+        Breakdown is only required if the transaction is a checkout one. For standard iDEAL transactions, the breakdown is not needed.
+      properties:
+        orderAmount:
+          type: integer
+          format: int64
+          description: |-
+            Order amount in cents.
+          example: 1000
+          minimum: 0
+          maximum: 999999999999
+        shippingCost:
+          type: integer
+          format: int64
+          description: |-
+            Shipping cost in cents. This field is used only in the fast-checkout flow (`CreateTransactionRequest.TransactionFlow=FAST_CHECKOUT`).
+          example: 100
+          minimum: 0
+          maximum: 999999999999
+      required:
+        - orderAmount
+        - shippingCost
+
+    Currency:
+      type: string
+      enum:
+        - EUR
+      default: EUR
+      description: |-
+        Currency code. Only EUR is supported. [ISO 4217] format
+        Corresponding to iDEAL 1.0 field 'transaction.currency'
+      externalDocs:
+        url: "http://en.wikipedia.org/wiki/ISO_4217"
+        description: ISO 4217 format of the CURRENCY
+
+    CreateTransactionCreditor:
+      type: object
+      description: |-
+        The details of the creditor for which the Merchant/CPSP creates a transaction.
+        Please note that some fields of the creditor data are passed as part of `JWT Access Token`
+        and some others are sent in this request. For more info please refer to `CreateTransactionRequest`\`CreateQRCodeRequest`.
+      required:
+        - countryCode
+      properties:
+        sub:
+          $ref: "#/components/schemas/SubCreditor"
+        countryCode:
+          $ref: "#/components/schemas/MerchantCountryCode"
+
+    Creditor:
+      type: object
+      description: |-
+        The details of the creditor for which the Merchant/CPSP creates a transaction.
+        For populating this object, iDEAL combines the data received in `JWT Access Token` and `CreateTransactionRequest`.
+      required:
+        - id
+        - name
+        - iban
+        - bic
+      properties:
+        id:
+          type: string
+          description: |-
+            The ID of the CPSP if cpsp flag is true and ID of the merchant if cpsp flag is false.
+            Corresponding to iDEAL 1.0 field "merchant.merchantId"
+          example: "100000001"
+          minLength: 9
+          maxLength: 9
+          pattern: "[0-9]+"
+        name:
+          type: string
+          description: |-
+            The name of the CPSP if cpsp flag is true and name of the merchant if cpsp flag is false.
+            Corresponding to iDEAL 1.0 field 'merchant.legalName'
+          example: "The Dutch CookieShop Company N.V."
+          minLength: 1
+          maxLength: 70
+        sub:
+          $ref: "#/components/schemas/SubCreditor"
+        cpsp:
+          type: boolean
+          description: |
+            This boolean field denotes if the merchant sent in the request is a CPSP or not.
+             ** TRUE  -- Creditor.id is the ID of the CPSP, creditor.name is the name of the CPSP, creditor.sub.id is the ID of merchant and creditor.sub.name is the name of the merchant.
+             ** FALSE -- Creditor.id is the ID of the Merchant, creditor.name is the name of the merchant, creditor.sub.id is the ID of sub-merchant and creditor.sub.name is the name of the sub merchant.
+          default: false
+        cpspSchemeId:
+          $ref: "#/components/schemas/CPSPSchemeId"
+        c2cProviderSchemeId:
+          $ref: "#/components/schemas/C2CProviderSchemeId"
+        countryCode:
+          $ref: "#/components/schemas/MerchantCountryCode"
+        iban:
+          type: string
+          description: |-
+            Account number in IBAN (ISO 13616) format
+            Corresponding to iDEAL 1.0 field 'merchant.merchantIban'
+          example: "NL44RABO0123456789"
+          externalDocs:
+            description: International Bank Account Number
+            url: "https://en.wikipedia.org/wiki/International_Bank_Account_Number"
+          pattern: "^[a-zA-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}$"
+          minLength: 1
+        bic:
+          $ref: "#/components/schemas/CreditorBIC"
+
+    SubCreditor:
+      type: object
+      description: |-
+        The details of the sub creditor for which the Merchant/CPSP creates a transaction on behalf of.
+        This field is conditionally mandatory. If Creditor.cpsp is true the Creditor.SubCreditor field should be specified.
+      required:
+        - name
+        - id
+      properties:
+        id:
+          type: integer
+          description: |-
+            The ID of the merchant if cpsp flag is true and ID of the sub-merchant if cpsp flag is false.
+            Corresponding to iDEAL 1.0 field 'merchant.subId'
+          example: 1234
+          minimum: 1
+          maximum: 999999
+          exclusiveMinimum: false
+          exclusiveMaximum: false
+        name:
+          type: string
+          description: |-
+            The name of the merchant if cpsp flag is true and name of the sub merchant if cpsp flag is false.
+            Corresponding to iDEAL 1.0 field 'merchant.tradeName'
+          example: "Dutch CookieShop"
+          minLength: 1
+          maxLength: 35
+    ExpectedDebtor:
+      type: object
+      description: |-
+        The details of the debtor as known to the merchant when creating the transaction.
+      required:
+        - userAgent
+      properties:
+        userToken:
+          type: string
+          description: |-
+            The token of the debtor received via userTokenCallback earlier.
+            The presence of this token indicates that the user is known to the merchant
+            and has already agreed to be remembered by iDEAL for this merchant.
+            This will trigger the profile recognition with userToken flow (if possible).
+          minLength: 1
+          maxLength: 128
+        userAgent:
+          type: string
+          description: |-
+            The User-Agent contains a characteristic string that
+            allows the network protocol peers to identify the application type,
+            operating system, software vendor, or software version of the
+            requesting software user agent.
+          minLength: 1
+          maxLength: 500
+    CreditorBIC:
+      type: string
+      description: |-
+        The business identifier code of the bank where the merchant's account is held.
+        Corresponding to iDEAL 1.0 field 'merchant.merchantBIC'
+      minLength: 8
+      maxLength: 11
+      pattern: "^[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}$"
+      example: "INGBNL2AXXX"
+      externalDocs:
+        description: The ISO 9362 standard for the Bank Identifer Code
+        url: "https://en.wikipedia.org/wiki/ISO_9362"
+    DebtorBIC:
+      type: string
+      description: |-
+        The business identifier code of the bank where the consumer's account is held.
+        Corresponding to iDEAL 1.0 field 'transaction.consumerBIC'
+      minLength: 8
+      maxLength: 11
+      pattern: "^[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}$"
+      example: "ABNANL2AXXX"
+      externalDocs:
+        description: The ISO 9362 standard for the Bank Identifer Code
+        url: "https://en.wikipedia.org/wiki/ISO_9362"
+    TransactionCallbackUrl:
+      type: string
+      format: uri
+      example: https://checkout.company.com/transaction/webhook/transaction-callback
+      description: |-
+        Callback URL to which the Merchant/CPSP will be notified about the transaction payout/cancel. If it's not set, no callback will be done on a successful payment.
+        This URL will not be modified by iDEAL, therefore the callback will be done on the provided URL. Also, the provided callback url should follow the endpoints provided in the callback APIs.
+        A minimum length of 1 and a maximum length of 512 should be considered for this field. (They are not explicitly mentioned as properties since this causes code generation issues for URI fields)
+
+    UserTokenCallbackUrl:
+      type: string
+      format: uri
+      example: https://checkout.company.com/token/webhook/user-token-callback
+      description: |-
+        The userToken Callback URL to which the Merchant/CPSP will be notified when the user wants to be remembered for the next transaction on a merchant.
+        This field is provided by the Merchant/CPSP when creating a transaction only in case the user is logged in on the merchant side.
+        If this field is not included in CreateTransactionRequest, then iDEAL will skip the "Remember Merchant" flow for the user.
+        This URL will not be modified by iDEAL, therefore the callback will be done on the provided URL. Also, the provided callback url should follow the endpoints provided in the callback APIs.
+        A minimum length of 1 and a maximum length of 512 should be considered for this field. (They are not explicitly mentioned as properties since this causes code generation issues for URI fields)
+
+    ReturnUrl:
+      type: string
+      description: |-
+        The return URL to redirect a user back to the merchant website once the transaction is completed.
+        Corresponding to iDEAL 1.0 field 'merchantReturnUrl'.
+        A minimum length of 1 and a maximum length of 580 should be considered for this field. (They are not explicitly mentioned as properties since this causes code generation issues for URI fields)
+      example: "https://www.myshop.com/paymentHandling"
+      format: string
+
+    CPSPSchemeId:
+      type: string
+      description: |-
+        This is the unique ID of the CPSP among all parties in the context of iDEAL. It is conditionally required in case `cpsp` flag is true.
+
+        Note: This field is different than `creditor.id` (the ID of CPSP when `cpsp` flag is true). `creditor.id` can vary
+        for the same cpsp among different acquirers while this field is meant to be unique for the cpsp in the context of iDEAL.
+        It will be used for invoicing and reporting on iDEAL side.
+      minLength: 8
+      maxLength: 11
+      example: "s8f0kg85Sk"
+
+    C2CProviderSchemeId:
+      type: string
+      description: |-
+        This is the unique ID of the C2C provider among all parties in the context of iDEAL.
+        This field is conditionally required in case the (sub)merchant is a C2C provider.
+
+        Note: This field will be used for invoicing and reporting on iDEAL side.
+      minLength: 8
+      maxLength: 11
+      example: "8f9gss92ks0"
+
+    MerchantCountryCode:
+      type: string
+      description: |-
+        Two-letter country code according to ISO 3166-1 alpha-2 standard.
+        It indicates the origin country of the (sub)merchant.
+      minLength: 2
+      maxLength: 2
+      example: "NL"
+
+    TransactionId:
+      type: string
+      minLength: 16
+      maxLength: 16
+      description: The Unique transaction Identifier. Corresponding to iDEAL 1.0 field 'transaction.transactionId'.
+      example: "0001000000000001"
+      pattern: "[0-9]{16}"
+
+    TransactionStatus:
+      type: string
+      enum:
+        - OPEN
+        - IDENTIFIED
+        - EXPIRED
+        - CANCELLED
+        - SUCCESS
+        - FAILURE
+      description: |-
+        | Status | Description |
+        |--------|-------------|
+        | OPEN | The transaction is created and is open to be scanned by the user. The final status is not known. |
+        | IDENTIFIED | The transaction has been identified and locked by a user. The final status is not known. |
+        | EXPIRED | The transaction has expired. |
+        | CANCELLED | The transaction was canceled. |
+        | SUCCESS | The transaction has succeeded. |
+        | FAILURE  | The transaction has failed. |
+
+    Link:
+      type: object
+      title: Link
+      description: Minimum length of 1 and a maximum length of 512 should be considered for this field. (They are not explicitly mentioned as properties since this causes code generation issues for URI fields)
+      properties:
+        href:
+          type: string
+          format: uri
+      required:
+        - href
+
+    Links:
+      type: object
+      title: Links
+      description: |-
+        Provides the related links for a transaction:
+        * _RedirectUrl_ - Provides the URL to which the merchant will need to redirect the user. The URL is determined by the iDEAL access point based on the transaction flow and it contains one of the following:
+          * iDEAL Payment Page URL: the page provided by iDEAL where the user can scan a QR code
+          * the universal link (deeplink) for the issuer: Corresponding to iDEAL 1.0 field 'issuer.issuerAuthenticationUrl'
+        * _ReturnUrl_ - Provides the return URL to redirect a user back to the merchant website once the transaction is completed. Corresponding to iDEAL 1.0 field 'merchantReturnUrl'.
+
+        Note: Minimum length of 1 and a maximum length of 512 should be considered for URL fields. (They are not explicitly mentioned as properties since this causes code generation issues for URI fields)
+      properties:
+        redirectUrl:
+          $ref: "#/components/schemas/Link"
+        returnUrl:
+          type: object
+          title: Link
+          description: Minimum length of 1 and a maximum length of 580 should be considered for this field. (They are not explicitly mentioned as properties since this causes code generation issues for URI fields)
+          properties:
+            href:
+              type: string
+              format: string
+          required:
+            - href
+      required:
+        - redirectUrl
+        - returnUrl
+
+    AbstractTransactionResponse:
+      type: object
+      description: Common Response Model used for get and create transaction responses
+      required:
+        - transactionId
+        - createdDateTimestamp
+        - expiryDateTimestamp
+        - amount
+        - creditor
+        - description
+        - reference
+        - transactionType
+      properties:
+        transactionId:
+          $ref: "#/components/schemas/TransactionId"
+        createdDateTimestamp:
+          type: string
+          format: date-time
+          description: |-
+            The creation timestamp of the transaction
+            in [ISODateTime standard](https://www.iso20022.org/standardsrepository/type/ISODateTime), expressed in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ)
+        expiryDateTimestamp:
+          type: string
+          format: date-time
+          description: |-
+            The timestamp from which the transaction will expire
+            in [ISODateTime standard](https://www.iso20022.org/standardsrepository/type/ISODateTime), expressed in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ)
+        description:
+          $ref: "#/components/schemas/TransactionDescription"
+        reference:
+          $ref: "#/components/schemas/TransactionReference"
+        transactionType:
+          $ref: "#/components/schemas/TransactionType"
+        transactionFlow:
+          $ref: "#/components/schemas/TransactionFlow"
+        amount:
+          $ref: "#/components/schemas/Amount"
+        creditor:
+          $ref: "#/components/schemas/Creditor"
+        expectedDebtor:
+          $ref: "#/components/schemas/ExpectedDebtor"
+        transactionCallbackUrl:
+          $ref: "#/components/schemas/TransactionCallbackUrl"
+        mcc:
+          $ref: "#/components/schemas/MCC"
+        issuerId:
+          $ref: "#/components/schemas/IssuerId"
+
+    MCC:
+      type: string
+      description: The Merchant Category Code of the merchant being paid for this transaction
+      minLength: 4
+      maxLength: 4
+      example: 5812
+      externalDocs:
+        description: ISO 18245 standard for the merchant category code
+        url: "https://en.wikipedia.org/wiki/Merchant_category_code"
+
+    IssuerId:
+      type: string
+      description: |-
+        The business identifier code for the Issuer.
+        Corresponding to iDEAL 1.0 field 'issuer.issuerId'.
+      minLength: 8
+      maxLength: 11
+      pattern: "^[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}$"
+      example: "RABONL2UXXX"
+      externalDocs:
+        description: The ISO 9362 standard for the Business Identifer Code
+        url: "https://en.wikipedia.org/wiki/ISO_9362"
+
+    TransactionDescription:
+      type: string
+      description: |-
+        The description of the reason for the transaction (or transactions associated with a QR code). The text here is shown to the user while he/she is trying to make the transaction.
+        *It will also be shown on the bank statement of the user after payment (as part of the remittance information).* Corresponding to iDEAL 1.0 field 'transaction.description' or to iDEAL 1.0 QR code field 'description'.
+      example: "Cookie"
+      minLength: 1
+      maxLength: 35
+
+    TransactionReference:
+      type: string
+      description: |-
+        The external transaction reference used to reference the transaction (or transactions associated with a QR code) in the calling party's system.
+        Corresponding to iDEAL 1.0 field 'transaction.purchaseId' or  iDEAL 1.0 QR code field 'reference'
+        *It will also be shown on the bank statement of the user after payment (as part of the remittance information).* As this field is used to reconcile, a restricted set of characters must be used that can be supported within SEPA.
+      example: "iDEALpurchase21"
+      minLength: 1
+      maxLength: 35
+      pattern: "[a-zA-Z0-9]{1,35}"
+
+    CreateTransactionResponse:
+      type: object
+      description: |-
+        The response sent after a transaction creation request succeeded.
+        The details of the created transaction will be returned to the acquirer.
+      allOf:
+        - $ref: "#/components/schemas/AbstractTransactionResponse"
+        - type: object
+          properties:
+            links:
+              $ref: "#/components/schemas/Links"
+            userTokenCallbackUrl:
+              $ref: "#/components/schemas/UserTokenCallbackUrl"
+            notificationResult:
+              $ref: "#/components/schemas/NotificationResult"
+            requestedCheckoutDetails:
+              $ref: "#/components/schemas/RequestedCheckoutDetails"
+          required:
+            - links
+
+    DebtorCheckoutDetails:
+      type: object
+      title: DebtorCheckoutDetails
+      description: |-
+        The checkout details defined by the debtor before completing the transaction.
+
+        By default, the invoice address will be the same as the shipping address unless it is explicitly changed by the
+        debtor.
+
+        **Note:** This field is only available if the transaction is `SUCCEEDED` and has the fast-checkout flow enabled
+        (`CreateTransactionRequest.amount.breakdown.shippingCost` was defined).
+      properties:
+        contactDetails:
+          $ref: "#/components/schemas/DebtorContactDetails"
+        shippingAddress:
+          $ref: "#/components/schemas/Address"
+        invoiceAddress:
+          $ref: "#/components/schemas/Address"
+
+    DebtorContactDetails:
+      type: object
+      title: DebtorContactDetails
+      properties:
+        firstName:
+          type: string
+          description: The first name of the debtor (can be different from the first name in the contact details)
+          example: "Edsger"
+          minLength: 1
+        lastName:
+          type: string
+          description: The last name of the debtor (can be different from the last name in the contact details)
+          example: "Dijkstra"
+          minLength: 1
+        phoneNumber:
+          type: string
+          description: The phone number of the debtor in E.164 format
+          pattern: "^\\+[1-9][0-9]{1,14}$"
+          example: "+31612345678"
+        email:
+          type: string
+          description: The e-mail address of the debtor
+          format: email
+          example: "edsger@domain.nl"
+          minLength: 1
+
+    Address:
+      type: object
+      title: Address
+      properties:
+        firstName:
+          type: string
+          description: The first name of the debtor (can be different from the first name in the contact details)
+          example: "Edsger"
+          minLength: 1
+        lastName:
+          type: string
+          description: The last name of the debtor (can be different from the first name in the contact details)
+          example: "Dijkstra"
+          minLength: 1
+        companyName:
+          type: string
+          description: The company name of the debtor
+          example: "Cookie factory"
+          minLength: 1
+        postalCode:
+          type: string
+          description: The postal code of the address without spaces
+          example: "1234AB"
+          minLength: 1
+        houseNumber:
+          type: string
+          description: The house number of the address
+          example: "100"
+          minLength: 1
+        addition:
+          type: string
+          description: The addition of the address
+          example: "2B"
+          minLength: 1
+        street:
+          type: string
+          description: The street of the address
+          example: "Bankastraat"
+          minLength: 1
+        city:
+          type: string
+          description: The city of the address
+          example: "Amsterdam"
+          minLength: 1
+        countryName:
+          type: string
+          description: Name of the country
+          example: "Netherlands"
+          minLength: 1
+
+    RequestedCheckoutDetails:
+      type: object
+      title: RequestedCheckoutDetails
+      description: |-
+        This field indicates the Merchant/CPSP's desire to receive checkout details of the debtor in
+        transaction successful callback. According to GDPR, the calling party must explicitly ask for the fields
+        that contain personal information. The requested data will be provided via /transaction-callback endpoint.
+
+        Note: This field is needed only for the fast-checkout flow. The Merchant/CPSP must provide this data when
+        `CreateTransactionRequest.TransactionFlow=FAST_CHECKOUT`.
+        
+        Note: At least one of the fields must be set to `true`, otherwise an error will be returned
+
+        Note: The Merchant/CPSP is responsible for requesting what is meant 'good enough' data fields for them in order to
+        finalize the order and deliver the goods.
+      properties:
+        debtorContactDetails:
+          $ref: "#/components/schemas/DebtorContactDetailsRequestData"
+        shippingAddress:
+          type: boolean
+          description: Request to provide the shipping address of the debtor
+          example: true
+          default: false
+        invoiceAddress:
+          type: boolean
+          description: Request to provide the invoice address of the debtor
+          example: true
+          default: false
+
+    DebtorContactDetailsRequestData:
+      type: object
+      title: DebtorContactDetailsRequestData
+      properties:
+        firstName:
+          type: boolean
+          description: Request to provide the first name of the debtor
+          example: true
+          default: false
+        lastName:
+          type: boolean
+          description: Request to provide the last name of the debtor
+          example: true
+          default: false
+        phoneNumber:
+          type: boolean
+          description: Request to provide the phone number of the debtor in E.164 format
+          example: true
+          default: false
+        email:
+          type: boolean
+          description: Request to provide the e-mail address of the debtor
+          example: true
+          default: false
+
+    GetTransactionResponse:
+      type: object
+      description: |-
+        Response with all the transaction details for the transaction identified by a transactionId.
+      title: getTransactionResponse
+      allOf:
+        - $ref: "#/components/schemas/AbstractTransactionResponse"
+        - type: object
+          properties:
+            status:
+              $ref: "#/components/schemas/TransactionStatus"
+            guaranteedAmount:
+              type: integer
+              description: |-
+                The amount guaranteed by the Issuer to the Merchant/CPSP in Eurocents. Only included if the status is 'SUCCESS'.
+                For transactions with a FIXED amount, the Merchant/CPSP should verify that this value is equal to the value of the amount.
+                In case of discrepancy (although it is not expected to happen in practice), the acquirer must flag the records and contact the respective issuer.
+              format: int64
+              example: 1000
+              minimum: 1
+              maximum: 999999999999
+            finalStateDateTimestamp:
+              type: string
+              format: date-time
+              description: |-
+                If the transaction is in its final state(SUCCESS,FAILURE,CANCELLED or EXPIRED), then this field represents the timestamp on which the transaction reached this state
+                in [ISODateTime standard](https://www.iso20022.org/standardsrepository/type/ISODateTime), expressed in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ)
+            debtor:
+              type: object
+              description: The details of the debtor ( Available only after the transaction is in SUCCEEDED state )
+              title: debtor
+              properties:
+                iban:
+                  type: string
+                  description: |-
+                    Account number of the consumer in IBAN (ISO 13616) format.
+                    Corresponding to iDEAL 1.0 field 'transaction.consumerIBAN'
+                  example: "NL44RABO0123456789"
+                  externalDocs:
+                    description: International Bank Account Number
+                    url: "https://en.wikipedia.org/wiki/International_Bank_Account_Number"
+                  pattern: "^[a-zA-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}$"
+                  minLength: 1
+                bic:
+                  $ref: "#/components/schemas/DebtorBIC"
+                name:
+                  type: string
+                  description: |-
+                    The name of the debtor according to the name of the account used for payment.
+                    Corresponding to iDEAL 1.0 field 'transaction.consumerName'
+                  example: "Edsger Wybe Dijkstra"
+                  minLength: 1
+                  maxLength: 70
+                checkoutDetails:
+                  $ref: "#/components/schemas/DebtorCheckoutDetails"
+              required:
+                - name
+                - iban
+
+    GetDebtorPreferencesResponse:
+      type: object
+      description: |-
+        Response with the prefernce of the debtor identified by userToken.
+        This response provides the preferred bank account information of a recognised user to the Merchant/CPSP.
+      title: debtorPreferencesResponse
+      required:
+        - issuerName
+        - issuerLogoUrl
+        - iban
+      properties:
+        issuerName:
+          type: string
+          description: The name of the issuer bank debtor paid with.
+          minLength: 1
+          maxLength: 36
+        issuerLogoUrl:
+          type: string
+          description:
+            The logo URL of the issuer bank that debtor paid with.
+            A minimum length of 1 and a maximum length of 512 should be considered for this field. (They are not explicitly mentioned as properties since this causes code generation issues for URI fields)
+          format: uri
+        maskedIban:
+          type: string
+          description: |-
+            Masked Account number in IBAN (ISO 13616) format. iDEAL only stores masked IBANs for user profiles.
+          example: "NL44RABO******6789"
+          externalDocs:
+            description: Account number in IBAN (ISO 13616) format
+            url: "https://en.wikipedia.org/wiki/International_Bank_Account_Number"
+          pattern: "^[a-zA-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{4,4}[*]{6,6}[0-9]{4,4}$"
+          minLength: 18
+          maxLength: 18
+
+    NotificationResult:
+      type: string
+      enum:
+        - PUSH_SENT_SHOW_WAITING_SCREEN
+        - REDIRECT
+      description: |-
+        This field indicates the issuer's decision to send the notification to the user.
+        The Merchant/CPSP can direct the user to the right link using this field.
+        The links are returned in `CreateTransactionResponse.links`.
+        | Status | Description |
+        |--------|-------------|
+        | PUSH_SENT_SHOW_WAITING_SCREEN | The issuer attempted to send the notification. The merchant should show a `waiting for notification screen` to the user. In case the notification doesn't work\takes too long, there should be a button to redirect the user to the iDEAL Payment Page (provided in `CreateTransactionResponse.links.redirectUrl`). |
+        | REDIRECT | The merchant must redirect the user to the URL provided in `CreateTransactionResponse.links.redirectUrl`. |
+
+    CreateQRCodeRequest:
+      type: object
+      description: |-
+        Create QR Code request with all the details to create a QR Code.
+        The acquirer sends this request to iDEAL in order to create a new QR Code.
+        Some creditor details are sent as part of the `JWT Access token` issued by the acquirer.
+        More precisely,
+        * If `JWT Access token.scope` is `CPSP` then:
+          * The cpsp must provide `mcc` in this request and not in the `JWT Access token`.
+        * If `JWT Access token.scope` is `MERCHANT` then:
+          * The merchant must provide `mcc` in the `JWT Access token` and not in this request.
+      required:
+        - amount
+        - creditor
+        - description
+        - reference
+        - expirationPeriod
+      properties:
+        amount:
+          $ref: "#/components/schemas/QRAmount"
+        description:
+          $ref: "#/components/schemas/TransactionDescription"
+        reference:
+          $ref: "#/components/schemas/TransactionReference"
+        expirationPeriod:
+          type: integer
+          description: Time in seconds after which the QR code will expire.
+          minimum: 60
+          maximum: 63158400
+          format: int64
+          exclusiveMinimum: false
+          exclusiveMaximum: false
+        creditor:
+          $ref: "#/components/schemas/CreateTransactionCreditor"
+        mcc:
+          $ref: "#/components/schemas/MCC"
+        transactionCallbackUrl:
+          $ref: "#/components/schemas/TransactionCallbackUrl"
+        qrCallbackUrl:
+          $ref: "#/components/schemas/QRCallbackUrl"
+        oneOff:
+          $ref: "#/components/schemas/OneOff"
+        size:
+          $ref: "#/components/schemas/QRSize"
+        format:
+          $ref: "#/components/schemas/QRFormat"
+
+    QRCodeId:
+      type: string
+      minLength: 16
+      maxLength: 16
+      description: The Unique QR Code Identifier.
+      example: "8azd1y7x9qvaf2k1"
+      pattern: "[0-9a-z]{16}"
+
+    OneOff:
+      type: boolean
+      description: |-
+        This field is used to indicate if the QR code can be paid once or multiple times.
+        | Value | Description |
+        |--------|-------------|
+        | true | This QR code can only be paid once. |
+        | false | This QR code can be paid multiple times. |
+      default: false
+
+    QRSize:
+      type: integer
+      description: |-
+        The scale of QR code.
+        **Note** This field only applies to the PNG image format and the number of pixels can be obtained from this option.
+        eg. If the Qr code is 53 modules wide, a size with value 3 will produce a png image with the size of 159x159.
+      minimum: 3
+      maximum: 15
+      exclusiveMinimum: false
+      exclusiveMaximum: false
+      default: 3
+
+    QRFormat:
+      type: string
+      enum:
+        - SVG
+        - PNG
+      description: |-
+        This field is used to indicate the format of the generated QR Code.
+        | Value | Description |
+        |--------|-------------|
+        | SVG | The generated QR code will be in SVG format. |
+        | PNG | This generated QR code will be in PNG format. |
+      default: PNG
+
+    CreateQRCodeResponse:
+      type: object
+      description: |-
+        The response sent after a QR Code creation request succeeded.
+        iDEAL returns the created QR code details to the Merchant/CPSP by this response.
+      required:
+        - qrcodeId
+        - createdDateTimestamp
+        - expiryDateTimestamp
+        - amount
+        - creditor
+        - description
+        - reference
+        - oneOff
+        - qrcodeUrl
+      properties:
+        qrcodeId:
+          $ref: "#/components/schemas/QRCodeId"
+        createdDateTimestamp:
+          type: string
+          format: date-time
+          description: |-
+            The creation timestamp of the QR code
+            in [ISODateTime standard](https://www.iso20022.org/standardsrepository/type/ISODateTime), expressed in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ)
+        expiryDateTimestamp:
+          type: string
+          format: date-time
+          description: |-
+            The timestamp from which the QR code will expire
+            in [ISODateTime standard](https://www.iso20022.org/standardsrepository/type/ISODateTime), expressed in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ)
+        description:
+          $ref: "#/components/schemas/TransactionDescription"
+        reference:
+          $ref: "#/components/schemas/TransactionReference"
+        amount:
+          $ref: "#/components/schemas/QRAmount"
+        creditor:
+          $ref: "#/components/schemas/Creditor"
+        transactionCallbackUrl:
+          $ref: "#/components/schemas/TransactionCallbackUrl"
+        qrCallbackUrl:
+          $ref: "#/components/schemas/QRCallbackUrl"
+        mcc:
+          $ref: "#/components/schemas/MCC"
+        oneOff:
+          $ref: "#/components/schemas/OneOff"
+        qrcodeUrl:
+          type: string
+          format: href
+          description: The URL where the QR code can be fetched from.
+          example: "https://merchant-cpsp.idealapi.nl/v2/qrcode?f=png&p=HTTPS%3A%2F%2FQR.IDEAL.NL%2F2ALE7RYXH4RPSGTDPK2PCFNHPJUM"
+
+    QRCallbackUrl:
+      type: string
+      format: uri
+      example: https://checkout.company.com/qr/webhook/qr-callback
+      description: |-
+        The QR callback URL to which the Merchant/CPSP will be called to notify a QR has been identified/scanned and a subsequent transaction has been created.
+        This URL will not be modified by iDEAL, therefore the callback will be done on the provided URL. Also, the provided callback url should follow the endpoints provided in the callback APIs.
+        A minimum length of 1 and a maximum length of 512 should be considered for this field. (They are not explicitly mentioned as properties since this causes code generation issues for URI fields)
+
+  responses:
+    400InputError:
+      description: |-
+        Error codes:
+        * `BODY_MISSING`: A json needs to be provided
+        * `FIELD_IS_REQUIRED`: Field X is mandatory
+        * `FIELD_IS_INVALID`: Field X is invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+      headers:
+        Request-ID:
+          $ref: "#/components/headers/Request-ID"
+        Signature:
+          $ref: "#/components/headers/ResponseSignature"
+    400InputError_WithoutBody:
+      description: |-
+        Error codes:
+        * `FIELD_IS_REQUIRED`: Field X is mandatory
+        * `FIELD_IS_INVALID`: Field X is invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+      headers:
+        Request-ID:
+          $ref: "#/components/headers/Request-ID"
+        Signature:
+          $ref: "#/components/headers/ResponseSignature"
+    401Unauthorized:
+      description: |-
+        If JWS signature is not valid. Error codes:
+        * `INVALID_SIGNATURE` - caller doesn't have valid authentication credentials
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+      headers:
+        Request-ID:
+          $ref: "#/components/headers/Request-ID"
+        Signature:
+          $ref: "#/components/headers/ResponseSignature"
+    403Forbidden:
+      description: |-
+        Error codes:
+        * `ACCESS_DENIED` - caller is not allowed to perform this operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+      headers:
+        Request-ID:
+          $ref: "#/components/headers/Request-ID"
+        Signature:
+          $ref: "#/components/headers/ResponseSignature"
+    404NotFound_QRCode:
+      description: |-
+        **Error Codes**
+        * `QRCODE_NOT_FOUND` - QRCode not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+      headers:
+        Request-ID:
+          $ref: "#/components/headers/Request-ID"
+        Signature:
+          $ref: "#/components/headers/ResponseSignature"
+
+    405MethodNotAllowed:
+      description: |-
+        Error codes:
+        * METHOD_NOT_ALLOWED - HTTP method is not allowed for the requested resource
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+      headers:
+        Request-ID:
+          $ref: "#/components/headers/Request-ID"
+        Signature:
+          $ref: "#/components/headers/ResponseSignature"
+    429TooManyRequests:
+      description: |-
+        Error codes:
+        * `TOO_MANY_REQUESTS` - too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+      headers:
+        Request-ID:
+          $ref: "#/components/headers/Request-ID"
+    500InternalServerError:
+      description: |-
+        Error codes:
+        * `TECHNICAL_ERROR` - technical error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+      headers:
+        Request-ID:
+          $ref: "#/components/headers/Request-ID"
+    503ServiceUnavailable:
+      description: |-
+        Service is unavailable
+  headers:
+    Request-ID:
+      description: |-
+        Unique request correlation id [correlating request.](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Common_non-standard_request_fields) It will be echoed back in response.
+      schema:
+        type: string
+        pattern: "^[a-zA-Z0-9-_]+$"
+        example: "u06zf2cMq-w6ciUvZ8_MeVaQ4h"
+        minLength: 1
+        maxLength: 36
+      required: true
+    ResponseSignature:
+      description: |-
+        This field is the [Detached JWS signature of the response](https://tools.ietf.org/html/rfc7797).
+
+        The Public Key(s) of iDEAL are in [JWK format](https://tools.ietf.org/html/rfc7517) as [JWKS](https://tools.ietf.org/html/rfc7517#section-5)
+        and they are hosted on a URL by iDEAL for the following environments:
+        * EXT (External):     https://ext.idealapi.nl/acquirer-certificates
+        * PROD (Production):  https://idealapi.nl/acquirer-certificates
+
+        The Merchant/CPSP, using the kid claim in JOSE header of the response, must find the right public key from this URL and verify the signature.
+
+        The signature must be computed as following:
+
+            jws = base64URLEncode(JOSE Header)..alg(base64URLEncode(JOSE Header).base64URLEncode(Response Body))
+
+            [JOSE Header](https://tools.ietf.org/html/rfc7515#section-4) =
+
+            {
+              "typ": "jose+json",
+              "kid": "JWK kid",
+              "alg": "[ES256(ECDSA using P-256 and SHA-256. Corresponding keysize 256 bit)] (https://tools.ietf.org/html/rfc7518#section-3.1)",
+              "https://idealapi.nl/sub" : "{creditorId} as provided in JWT_Access_Token.sub",
+              "https://idealapi.nl/iss" : "iDEAL",
+              "https://idealapi.nl/iat" : "{Current creation date time in [ISODateTime standard](https://www.iso20022.org/standardsrepository/type/ISODateTime), expressed in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ), expressed in UTC time format(YYYY-MM-DDThh:mm:ss.sssZ)},
+              "https://idealapi.nl/jti" : "{Request-ID}",
+              "https://idealapi.nl/path": "request path e.g. /v2/transactions/{transaction-id}, excluding base url https://mtls-issuer.idealapi.nl"
+              "crit": ["https://idealapi.nl/sub", "https://idealapi.nl/iss", "https://idealapi.nl/iat", "https://idealapi.nl/jti", "https://idealapi.nl/path"]
+            }
+      schema:
+        type: string
