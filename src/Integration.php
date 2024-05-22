@@ -72,7 +72,7 @@ final class Integration extends AbstractGatewayIntegration {
 		*/
 		\add_action(
 			'http_api_curl',
-			function ( $handle, $parsed_args, $url ) {
+			function ( $handle, $parsed_args ) {
 				if ( \array_key_exists( 'ssl_private_key_password', $parsed_args ) ) {
 					\curl_setopt( $handle, \CURLOPT_SSLKEYPASSWD, $parsed_args['ssl_private_key_password'] );
 				}
@@ -91,7 +91,7 @@ final class Integration extends AbstractGatewayIntegration {
 				}
 			},
 			10,
-			3
+			2
 		);
 	}
 
