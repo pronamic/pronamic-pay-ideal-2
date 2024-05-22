@@ -74,6 +74,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'http_api_curl',
 			function ( $handle, $parsed_args ) {
 				if ( \array_key_exists( 'ssl_private_key_password', $parsed_args ) ) {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- WordPress requests library does not support this yet.
 					\curl_setopt( $handle, \CURLOPT_SSLKEYPASSWD, $parsed_args['ssl_private_key_password'] );
 				}
 
@@ -83,10 +84,12 @@ final class Integration extends AbstractGatewayIntegration {
 				* @link https://github.com/php/php-src/blob/php-8.1.0/ext/curl/interface.c#L2935-L2955
 				*/
 				if ( \array_key_exists( 'ssl_certificate_blob', $parsed_args ) ) {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- WordPress requests library does not support this yet.
 					\curl_setopt( $handle, \CURLOPT_SSLCERT_BLOB, $parsed_args['ssl_certificate_blob'] );
 				}
 
 				if ( \array_key_exists( 'ssl_private_key_blob', $parsed_args ) ) {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- WordPress requests library does not support this yet.
 					\curl_setopt( $handle, \CURLOPT_SSLKEY_BLOB, $parsed_args['ssl_private_key_blob'] );
 				}
 			},
