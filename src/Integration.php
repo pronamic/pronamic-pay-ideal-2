@@ -222,7 +222,6 @@ final class Integration extends AbstractGatewayIntegration {
 			'classes'  => [ 'code' ],
 		];
 
-		// Purchase ID
 		$fields[] = [
 			'section'     => 'advanced',
 			'meta_key'    => '_pronamic_gateway_ideal_2_reference',
