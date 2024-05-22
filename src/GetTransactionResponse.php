@@ -17,6 +17,13 @@ namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
  */
 final class GetTransactionResponse extends AbstractTransactionResponse {
 	/**
+	 * Transaction status.
+	 * 
+	 * @var TransactionStatus|null
+	 */
+	public ?TransactionStatus $status;
+
+	/**
 	 * From remote JSON.
 	 * 
 	 * @param string $json JSON.
@@ -32,7 +39,7 @@ final class GetTransactionResponse extends AbstractTransactionResponse {
 
 		$object_access = new ObjectAccess( $data );
 
-		return new self(
+		$response = new self(
 			$object_access->get_property( 'transactionId' ),
 			$object_access->get_property( 'createdDateTimestamp' ),
 			$object_access->get_property( 'expiryDateTimestamp' ),
@@ -42,5 +49,11 @@ final class GetTransactionResponse extends AbstractTransactionResponse {
 			$object_access->get_property( 'reference' ),
 			$object_access->get_property( 'transactionType' )
 		);
+
+		if ( $object_access->has_property( 'status' ) ) {
+			$response->status = TransactionStatus::tryFrom( $object_access->get_property( 'status' ) );
+		}
+
+		return $response;
 	}
 }

@@ -281,9 +281,9 @@ final class Gateway extends PronamicGateway {
 
 		$response = GetTransactionResponse::from_remote_json( $body );
 
-		var_dump( $response );
-
-		exit;
+		if ( null !== $response->status ) {
+			$payment->set_status( $response->status->to_pronamic_status() );
+		}
 	}
 
 	/**
