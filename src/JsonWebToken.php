@@ -27,7 +27,7 @@ final class JsonWebToken implements \JsonSerializable {
 	/**
 	 * Payload.
 	 * 
-	 * @var string
+	 * @var string|null
 	 */
 	public $payload;
 
@@ -41,11 +41,11 @@ final class JsonWebToken implements \JsonSerializable {
 	/**
 	 * Construct JSON web token object.
 	 * 
-	 * @param string $header    Header.
-	 * @param string $payload   Payload.
-	 * @param string $signature Signatue.
+	 * @param string      $header    Header.
+	 * @param string|null $payload   Payload.
+	 * @param string      $signature Signatue.
 	 */
-	public function __construct( $header, $payload, $signature = '' ) {
+	public function __construct( $header, $payload = null, $signature = '' ) {
 		$this->header    = $header;
 		$this->payload   = $payload;
 		$this->signature = $signature;
@@ -102,7 +102,7 @@ final class JsonWebToken implements \JsonSerializable {
 			$format,
 			[
 				'$header'    => Client::base64_encode_url( Client::json_encode( $this->header ) ),
-				'$payload'   => Client::base64_encode_url( Client::json_encode( $this->payload ) ),
+				'$payload'   => ( null === $this->payload ) ? '' : Client::base64_encode_url( Client::json_encode( $this->payload ) ),
 				'$signature' => Client::base64_encode_url( $this->signature ),
 			]
 		);
