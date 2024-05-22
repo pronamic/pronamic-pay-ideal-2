@@ -81,7 +81,7 @@ final class Gateway extends PronamicGateway {
 			$payment->get_description(),
 			'iDEALpurchase21',
 			new CreateTransactionCreditor( 'NL' ),
-			'https://www.myshop.com/paymentHandling'
+			$payment->get_return_url()
 		);
 
 		$body = $create_transaction_request->remote_serialize();
