@@ -226,17 +226,17 @@ final class Integration extends AbstractGatewayIntegration {
 		$fields[] = [
 			'section'     => 'advanced',
 			'meta_key'    => '_pronamic_gateway_ideal_2_reference',
-			'title'       => __( 'Reference', 'pronamic_ideal' ),
+			'title'       => __( 'Reference', 'pronamic-pay-ideal-2' ),
 			'type'        => 'text',
 			'classes'     => [ 'regular-text', 'code' ],
 			'tooltip'     => sprintf(
 				/* translators: %s: <code>reference</code> */
-				__( 'The iDEAL %s parameter.', 'pronamic_ideal' ),
+				__( 'The iDEAL %s parameter.', 'pronamic-pay-ideal-2' ),
 				sprintf( '<code>%s</code>', 'purchaseID' )
 			),
 			'description' => sprintf(
 				'%s %s<br />%s',
-				__( 'Available tags:', 'pronamic_ideal' ),
+				__( 'Available tags:', 'pronamic-pay-ideal-2' ),
 				sprintf(
 					'<code>%s</code> <code>%s</code>',
 					'{order_id}',
@@ -244,7 +244,7 @@ final class Integration extends AbstractGatewayIntegration {
 				),
 				sprintf(
 					/* translators: %s: default code */
-					__( 'Default: <code>%s</code>', 'pronamic_ideal' ),
+					__( 'Default: <code>%s</code>', 'pronamic-pay-ideal-2' ),
 					'{payment_id}'
 				)
 			),
