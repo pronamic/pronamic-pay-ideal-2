@@ -27,9 +27,9 @@ final class CreateTransactionRequest implements RemoteSerializable {
 	/**
 	 * Transaction description
 	 *
-	 * example: Cookie
-	 * minLength: 1
-	 * maxLength: 35
+	 * Example: Cookie
+	 * Minimum length: 1
+	 * Maximum length: 35
 	 *
 	 * The description of the reason for the transaction (or transactions
 	 * associated with a QR code). The text here is shown to the user while
@@ -46,10 +46,10 @@ final class CreateTransactionRequest implements RemoteSerializable {
 	/**
 	 * Reference.
 	 *
-	 * example: iDEALpurchase21
-	 * minLength: 1
-	 * maxLength: 35
-	 * pattern: [a-zA-Z0-9]{1,35}
+	 * Example: iDEALpurchase21
+	 * Minimum length: 1
+	 * Maximum length: 35
+	 * Pattern: [a-zA-Z0-9]{1,35}
 	 *
 	 * The external transaction reference used to reference the transaction
 	 * (or transactions associated with a QR code) in the calling party's
@@ -75,7 +75,7 @@ final class CreateTransactionRequest implements RemoteSerializable {
 	/**
 	 * Transaction callback URL.
 	 *
-	 * example: https://checkout.company.com/transaction/webhook/transaction-callback
+	 * Example: https://checkout.company.com/transaction/webhook/transaction-callback
 	 *
 	 * Callback URL to which the Merchant/CPSP will be notified about the
 	 * transaction payout/cancel. If it's not set, no callback will be done on
@@ -85,6 +85,8 @@ final class CreateTransactionRequest implements RemoteSerializable {
 	 * A minimum length of 1 and a maximum length of 512 should be considered
 	 * for this field. (They are not explicitly mentioned as properties since
 	 * this causes code generation issues for URI fields)
+	 * 
+	 * @var string|null
 	 */
 	#[RemoteApiProperty( 'transactionCallbackUrl' )]
 	public ?string $transaction_callback_url;

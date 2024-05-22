@@ -17,18 +17,45 @@ use JsonSerializable;
  * JSON Web Token class
  */
 final class JsonWebToken implements \JsonSerializable {
+	/**
+	 * Header.
+	 * 
+	 * @var string
+	 */
 	public $header;
 
+	/**
+	 * Payload.
+	 * 
+	 * @var string
+	 */
 	public $payload;
 
+	/**
+	 * Signature.
+	 * 
+	 * @var string
+	 */
 	public $signature;
 
+	/**
+	 * Construct JSON web token object.
+	 * 
+	 * @param string $header    Header.
+	 * @param string $payload   Payload.
+	 * @param string $signature Signatue.
+	 */
 	public function __construct( $header, $payload, $signature = '' ) {
 		$this->header    = $header;
 		$this->payload   = $payload;
 		$this->signature = $signature;
 	}
 
+	/**
+	 * Get signing string.
+	 * 
+	 * @return string
+	 */
 	public function get_signing_string() {
 		return $this->format( '$header.$payload' );
 	}
@@ -117,6 +144,7 @@ final class JsonWebToken implements \JsonSerializable {
 	 * @link https://github.com/felx/nimbus-jose-jwt/blob/47d66f2775c392964788aa6389a46fac84f976cd/src/main/java/com/nimbusds/jose/JWSObject.java#L400-L422
 	 * @param string $value Value.
 	 * @return self
+	 * @throws \InvalidArgumentException Throws an invalid argument exception if the string does not meet expectations.
 	 */
 	public static function from_string( $value ) {
 		$parts = \explode( '.', $value );

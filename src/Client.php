@@ -22,7 +22,9 @@ final class Client {
 	private Config $config;
 
 	/**
-	 * Construct client.
+	 * Construct client object.
+	 * 
+	 * @param Config $config Configuration object.
 	 */
 	public function __construct( Config $config ) {
 		$this->config = $config;
@@ -137,7 +139,7 @@ final class Client {
 					\esc_html( $response_code ),
 					\esc_html( $body )
 				),
-				$response_code
+				(int) $response_code
 			);
 		}
 
@@ -150,13 +152,13 @@ final class Client {
 	 * @link https://base64.guru/standards/base64url
 	 * @link https://datatracker.ietf.org/doc/html/rfc4648#section-5
 	 * @link https://www.php.net/manual/en/function.base64-encode.php#103849
-	 *
+	 * @param string $value Value.
 	 * @return string
 	 */
 	public static function base64_encode_url( $value ) {
-		return rtrim(
-			strtr(
-				base64_encode( $value ),
+		return \rtrim(
+			\strtr(
+				\base64_encode( $value ),
 				[
 					'+' => '-',
 					'/' => '_',
