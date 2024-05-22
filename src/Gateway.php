@@ -90,7 +90,7 @@ final class Gateway extends PronamicGateway {
 			$payment->get_description(),
 			$reference,
 			new CreateTransactionCreditor( 'NL' ),
-			str_replace( 'pay.test', 'pay.reuel.nl', $payment->get_return_url() )
+			$payment->get_return_url()
 		);
 
 		$body = $create_transaction_request->remote_serialize();
