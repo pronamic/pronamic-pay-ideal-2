@@ -66,6 +66,7 @@ enum TransactionStatus: string {
 	 * @return string
 	 */
 	public function to_pronamic_status() {
+		// phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- Incorrect error? 
 		return match ( $this ) {
 			TransactionStatus::Open       => PaymentStatus::OPEN,
 			TransactionStatus::Identified => PaymentStatus::OPEN,
