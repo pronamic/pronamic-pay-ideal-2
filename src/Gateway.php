@@ -181,6 +181,111 @@ final class Gateway extends PronamicGateway {
 	 */
 	public function update_status( Payment $payment ) {
 		$client = new Client( $this->config );
+
+		$transaction_id = $payment->get_transaction_id();
+
+		if ( null === $transaction_id ) {
+			return;
+		}
+
+		$client = new Client( $this->config );
+
+		$configuration = $this->config;
+
+		$access_token = $this->get_cached_access_token();
+
+		$jwt = JsonWebToken::from_string( $access_token );
+
+		/**
+		 * Standard iDEAL Payment (Direct Connection).
+		 *
+		 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417604276/Standard+iDEAL+Payment+Direct+Connection
+		 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417538917/iDEAL+-+Merchant+CPSP+API
+		 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417604322/Security+for+Direct+Connection
+		 */
+		$url = $configuration->ideal_hub_url . '/merchant-cpsp/transactions/' . $transaction_id;
+
+		$date = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
+
+		$request_id = \wp_generate_uuid4();
+
+		$ideal_hub_signing_ssl_certificate = new Certificate( $configuration->ideal_hub_signing_ssl->certificate );
+
+		$jws_header = [
+			'typ'                           => 'jose+json',
+			'x5c'                           => [
+				\base64_encode( $ideal_hub_signing_ssl_certificate->get_der() ),
+			],
+			'alg'                           => $configuration->jws_algorithm,
+			'https://idealapi.nl/sub'       => $jwt->payload->sub,
+			'https://idealapi.nl/iss'       => $jwt->payload->sub,
+			'https://idealapi.nl/scope'     => $jwt->payload->scope,
+			'https://idealapi.nl/acq'       => $jwt->payload->iss,
+			'https://idealapi.nl/iat'       => $date->format( \DATE_ATOM ),
+			'https://idealapi.nl/jti'       => $request_id,
+			'https://idealapi.nl/token-jti' => $jwt->payload->jti,
+			'https://idealapi.nl/path'      => \wp_parse_url( $url, \PHP_URL_PATH ),
+			'crit'                          => [
+				'https://idealapi.nl/sub',
+				'https://idealapi.nl/iss',
+				'https://idealapi.nl/acq',
+				'https://idealapi.nl/iat',
+				'https://idealapi.nl/jti',
+				'https://idealapi.nl/path',
+				'https://idealapi.nl/scope',
+				'https://idealapi.nl/token-jti',
+			],
+		];
+
+		$private_key = \openssl_pkey_get_private(
+			$configuration->ideal_hub_signing_ssl->private_key,
+			$configuration->ideal_hub_signing_ssl->private_key_password
+		);
+
+		$jwt = new JsonWebToken( $jws_header );
+
+		$jwt->sign( $private_key, $configuration->jws_algorithm );
+
+		/**
+		 * Supplying request signatures for communication with the iDEAL hub.
+		 *
+		 * All requests to the iDEAL hub (2, 5) require the Creditor to supply
+		 * a signed, detached JWS signature in the "Signature" header. See
+		 * rfc7515 appendix-F for the detached JWS specification.
+		 *
+		 * @link https://datatracker.ietf.org/doc/html/rfc7515#appendix-F
+		 * @link https://ideal-portal.ing.nl/idealDeveloperPortal/getting-started
+		 */
+		$signature = $jwt->detached_content();
+
+		$result = \wp_remote_get(
+			$url,
+			[
+				'headers'                  => [
+					'Accept'        => 'application/json',
+					/**
+					* Unique request correlation id correlating request. It will be echoed back in response.
+					*
+					* @link https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Common_non-standard_request_fields
+					* @link https://stackoverflow.com/questions/25433258/what-is-the-x-request-id-http-header
+					*/
+					'Request-ID'    => $request_id,
+					'Authorization' => 'Bearer ' . $access_token,
+					'Signature'     => $signature,
+				],
+				'ssl_certificate_blob'     => $configuration->ideal_hub_mtls_ssl->certificate,
+				'ssl_private_key_blob'     => $configuration->ideal_hub_mtls_ssl->private_key,
+				'ssl_private_key_password' => $configuration->ideal_hub_mtls_ssl->private_key_password,
+			]
+		);
+
+		$body = \wp_remote_retrieve_body( $result );
+
+		$response = GetTransactionResponse::from_remote_json( $body );
+
+		var_dump( $response );
+
+		exit;
 	}
 
 	/**
