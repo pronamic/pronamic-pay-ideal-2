@@ -428,9 +428,10 @@ final class Integration extends AbstractGatewayIntegration {
 				(string) $this->get_meta( $post_id, 'ideal_2_ideal_hub_signing_certificate' ),
 				(string) $this->get_meta( $post_id, 'ideal_2_ideal_hub_signing_private_key' ),
 				(string) $this->get_meta( $post_id, 'ideal_2_ideal_hub_signing_private_key_password' ),
-			),
-			(string) $this->get_meta( $post_id, 'ideal_2_reference' ),
+			)
 		);
+
+		$config->reference = (string) $this->get_meta( $post_id, 'ideal_2_reference' );
 
 		return $config;
 	}

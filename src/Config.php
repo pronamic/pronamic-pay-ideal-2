@@ -80,7 +80,7 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	 *
 	 * @var string
 	 */
-	public $reference;
+	public $reference = '';
 
 	/**
 	 * Construct config.
@@ -100,11 +100,9 @@ final class Config extends GatewayConfig implements JsonSerializable {
 		SSLContext $acquirer_signing_ssl,
 		string $ideal_hub_url,
 		SSLContext $ideal_hub_mtls_ssl,
-		SSLContext $ideal_hub_signing_ssl,
-		string $reference
+		SSLContext $ideal_hub_signing_ssl
 	) {
 		$this->merchant_id = $merchant_id;
-		$this->reference   = $reference;
 
 		/**
 		 * Acquirer URL.
