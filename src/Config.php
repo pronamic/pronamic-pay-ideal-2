@@ -21,6 +21,8 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	 * JWS algorithm.
 	 *
 	 * Only ES256 and ES384 signing algorithms are allowed by the iDEAL Hub.
+	 * 
+	 * @var string
 	 */
 	public string $jws_algorithm = 'ES256';
 
@@ -76,9 +78,13 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	/**
 	 * Construct config.
 	 *
-	 * @param string $merchant_id   Merchant ID.
-	 * @param string $acquirer_url  Acquirer URL.
-	 * @param string $ideal_hub_url The iDEAL hub URL.
+	 * @param string     $merchant_id           Merchant ID.
+	 * @param string     $acquirer_url          Acquirer URL.
+	 * @param SSLContext $acquirer_mtls_ssl     Acquirer mTLS SSL context.
+	 * @param SSLContext $acquirer_signing_ssl  Acquirer signing SSL context.
+	 * @param string     $ideal_hub_url         The iDEAL hub URL.
+	 * @param SSLContext $ideal_hub_mtls_ssl    The iDEAL hub mTLS SSL context.
+	 * @param SSLContext $ideal_hub_signing_ssl The iDEAL hub signing SSL context.
 	 */
 	public function __construct(
 		string $merchant_id,
