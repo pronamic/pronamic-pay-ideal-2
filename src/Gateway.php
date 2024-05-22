@@ -76,12 +76,21 @@ final class Gateway extends PronamicGateway {
 		 */
 		$url = $configuration->ideal_hub_url . '/merchant-cpsp/transactions';
 
+		// Reference.
+		$reference = $payment->format_string( (string) $this->config->reference );
+
+		if ( '' === $reference ) {
+			$reference = $payment->get_id();
+		}
+
+		$payment->set_meta( 'reference', $reference );
+
 		$create_transaction_request = new CreateTransactionRequest(
 			new Amount( $payment->get_total_amount()->get_minor_units()->to_int() ),
 			$payment->get_description(),
-			'iDEALpurchase21',
+			$reference,
 			new CreateTransactionCreditor( 'NL' ),
-			$payment->get_return_url()
+			str_replace( 'pay.test', 'pay.reuel.nl', $payment->get_return_url() )
 		);
 
 		$body = $create_transaction_request->remote_serialize();

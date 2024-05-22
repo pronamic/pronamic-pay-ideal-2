@@ -222,6 +222,34 @@ final class Integration extends AbstractGatewayIntegration {
 			'classes'  => [ 'code' ],
 		];
 
+		// Purchase ID
+		$fields[] = [
+			'section'     => 'advanced',
+			'meta_key'    => '_pronamic_gateway_ideal_2_reference',
+			'title'       => __( 'Reference', 'pronamic_ideal' ),
+			'type'        => 'text',
+			'classes'     => [ 'regular-text', 'code' ],
+			'tooltip'     => sprintf(
+				/* translators: %s: <code>reference</code> */
+				__( 'The iDEAL %s parameter.', 'pronamic_ideal' ),
+				sprintf( '<code>%s</code>', 'purchaseID' )
+			),
+			'description' => sprintf(
+				'%s %s<br />%s',
+				__( 'Available tags:', 'pronamic_ideal' ),
+				sprintf(
+					'<code>%s</code> <code>%s</code>',
+					'{order_id}',
+					'{payment_id}'
+				),
+				sprintf(
+					/* translators: %s: default code */
+					__( 'Default: <code>%s</code>', 'pronamic_ideal' ),
+					'{payment_id}'
+				)
+			),
+		];
+
 		return $fields;
 	}
 
@@ -401,6 +429,7 @@ final class Integration extends AbstractGatewayIntegration {
 				(string) $this->get_meta( $post_id, 'ideal_2_ideal_hub_signing_private_key' ),
 				(string) $this->get_meta( $post_id, 'ideal_2_ideal_hub_signing_private_key_password' ),
 			),
+			(string) $this->get_meta( $post_id, 'ideal_2_reference' ),
 		);
 
 		return $config;
