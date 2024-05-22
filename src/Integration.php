@@ -169,7 +169,7 @@ final class Integration extends AbstractGatewayIntegration {
 		];
 
 		/**
-		 * iDEAL Hub mTLS.
+		 * The iDEAL Hub mTLS fields.
 		 */
 		$fields[] = [
 			'section'  => 'general',
@@ -196,7 +196,7 @@ final class Integration extends AbstractGatewayIntegration {
 		];
 
 		/**
-		 * iDEAL Hub signing.
+		 * The iDEAL Hub signing fields.
 		 */
 		$fields[] = [
 			'section'  => 'general',

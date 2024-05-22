@@ -72,6 +72,7 @@ final class Gateway extends PronamicGateway {
 		 *
 		 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417604276/Standard+iDEAL+Payment+Direct+Connection
 		 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417538917/iDEAL+-+Merchant+CPSP+API
+		 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417604322/Security+for+Direct+Connection
 		 */
 		$url = $configuration->ideal_hub_url . '/merchant-cpsp/transactions';
 
@@ -87,9 +88,6 @@ final class Gateway extends PronamicGateway {
 
 		$body = $create_transaction_request->remote_serialize();
 
-		/**
-		 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417604322/Security+for+Direct+Connection
-		 */
 		$date = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
 
 		$request_id = \wp_generate_uuid4();
@@ -203,7 +201,7 @@ final class Gateway extends PronamicGateway {
 		if ( false !== $result ) {
 			try {
 				$access_token_response = AccessTokenResponse::from_remote_json( $result );
-			} catch ( \Exception $e ) {
+			} catch ( \Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 				// No problem, will try to request a new access token.
 			}
 		}
