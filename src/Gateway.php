@@ -166,11 +166,10 @@ final class Gateway extends PronamicGateway {
 
 		$body = \wp_remote_retrieve_body( $result );
 
-		if ( \str_starts_with( $body, '{' ) ) {
-			$body = json_decode( $body );
-		}
+		$response = CreateTransactionResponse::from_remote_json( $body );
 
-		var_dump( $body );
+		$payment->set_action_url( $response->links->redirect_url->href );
+		$payment->set_transaction_id( $response->transaction_id );
 	}
 
 	/**

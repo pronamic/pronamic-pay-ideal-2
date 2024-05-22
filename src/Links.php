@@ -1,6 +1,6 @@
 <?php
 /**
- * Amount
+ * Links
  *
  * @author    Pronamic <info@pronamic.eu>
  * @copyright 2005-2023 Pronamic
@@ -11,37 +11,36 @@
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 /**
- * Amount class
+ * Links class
  *
  * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417538917/iDEAL+-+Merchant+CPSP+API
  */
-final class Amount implements RemoteSerializable {
+final class Links {
 	/**
-	 * Amount in cents.
+	 * Redirect URL.
 	 *
-	 * @var int
+	 * @var Link
 	 */
-	#[RemoteApiProperty( 'amount' )]
-	public int $amount;
+	#[RemoteApiProperty( 'redirectUrl' )]
+	public Link $redirect_url;
 
 	/**
-	 * Construct amount.
+	 * Return URL.
 	 *
-	 * @param int $amount Amount in cents.
+	 * @var Link
 	 */
-	public function __construct( int $amount ) {
-		$this->amount = $amount;
-	}
+	#[RemoteApiProperty( 'returnUrl' )]
+	public Link $return_url;
 
 	/**
-	 * Remote serialize.
+	 * Construct links object.
 	 *
-	 * @return mixed
+	 * @param Link $redirect_url Redirect URL.
+	 * @param Link $return_url   Return URL.
 	 */
-	public function remote_serialize() {
-		$serializer = new RemoteSerializer();
-
-		return $serializer->serialize( $this );
+	public function __construct( Link $redirect_url, Link $return_url ) {
+		$this->redirect_url = $redirect_url;
+		$this->return_url   = $return_url;
 	}
 
 	/**
@@ -59,7 +58,8 @@ final class Amount implements RemoteSerializable {
 		$object_access = new ObjectAccess( $data );
 
 		return new self(
-			$object_access->get_property( 'amount' )
+			Link::from_remote_object( $object_access->get_property( 'redirectUrl' ) ),
+			Link::from_remote_object( $object_access->get_property( 'returnUrl' ) )
 		);
 	}
 }

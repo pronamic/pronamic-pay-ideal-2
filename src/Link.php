@@ -1,6 +1,6 @@
 <?php
 /**
- * Amount
+ * Link
  *
  * @author    Pronamic <info@pronamic.eu>
  * @copyright 2005-2023 Pronamic
@@ -11,37 +11,35 @@
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 /**
- * Amount class
+ * Link class
  *
  * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417538917/iDEAL+-+Merchant+CPSP+API
  */
-final class Amount implements RemoteSerializable {
+final class Link {
 	/**
-	 * Amount in cents.
+	 * Hypertext reference.
 	 *
-	 * @var int
+	 * @var string
 	 */
-	#[RemoteApiProperty( 'amount' )]
-	public int $amount;
+	#[RemoteApiProperty( 'href' )]
+	public string $href;
 
 	/**
-	 * Construct amount.
+	 * Construct link object.
 	 *
-	 * @param int $amount Amount in cents.
+	 * @param string $href Hypertext reference.
 	 */
-	public function __construct( int $amount ) {
-		$this->amount = $amount;
+	public function __construct( string $href ) {
+		$this->href = $href;
 	}
 
 	/**
-	 * Remote serialize.
-	 *
-	 * @return mixed
+	 * To string.
+	 * 
+	 * @return string
 	 */
-	public function remote_serialize() {
-		$serializer = new RemoteSerializer();
-
-		return $serializer->serialize( $this );
+	public function __toString() {
+		return $this->href;
 	}
 
 	/**
@@ -59,7 +57,7 @@ final class Amount implements RemoteSerializable {
 		$object_access = new ObjectAccess( $data );
 
 		return new self(
-			$object_access->get_property( 'amount' )
+			$object_access->get_property( 'href' )
 		);
 	}
 }

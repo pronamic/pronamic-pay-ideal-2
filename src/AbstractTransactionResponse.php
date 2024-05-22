@@ -51,7 +51,7 @@ abstract class AbstractTransactionResponse {
 	/**
 	 * Creditor.
 	 * 
-	 * @var string
+	 * @var mixed
 	 */
 	#[RemoteApiProperty( 'creditor' )]
 	public $creditor;
@@ -83,14 +83,21 @@ abstract class AbstractTransactionResponse {
 	/**
 	 * Construct abstract transaction response.
 	 * 
-	 * @param string $transaction_id Transaction ID.
+	 * @param string $transaction_id         Transaction ID.
+	 * @param string $created_date_timestamp Created date timestamp.
+	 * @param string $expiry_date_timestamp  Expiry date timestamp.
+	 * @param Amount $amount                 Amount.
+	 * @param mixed  $creditor               Creditor.
+	 * @param string $description            Description.
+	 * @param string $reference              Reference.
+	 * @param string $transaction_type       Transaction type.
 	 */
 	public function __construct(
 		string $transaction_id,
 		string $created_date_timestamp,
 		string $expiry_date_timestamp,
 		Amount $amount,
-		string $creditor,
+		mixed $creditor,
 		string $description,
 		string $reference,
 		string $transaction_type
