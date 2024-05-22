@@ -84,8 +84,6 @@ final class Gateway extends PronamicGateway {
 			'https://www.myshop.com/paymentHandling'
 		);
 
-		$create_transaction_request->transaction_callback_url = 'https://checkout.company.com/transaction/webhook/91FA6EEC30844FAAB5';
-
 		$body = $create_transaction_request->remote_serialize();
 
 		$date = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
