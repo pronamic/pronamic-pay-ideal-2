@@ -1,8 +1,12 @@
 # Pronamic Pay - iDEAL 2.0
 
-This repository contains the Pronamic Pay integration for the new iDEAL.
+This repository contains the Pronamic Pay integration for the new iDEAL. The new iDEAL and the new iDEAL Hub can be accessed via three routes. This integration includes the integration where merchants connect directly to the iDEAL Hub. ING describes this as follows:
 
-https://ideal-portal.ing.nl/idealDeveloperPortal/the-new-ideal
+> - Route 1 - this is the traditional route, where the merchant connects via the acquirer platform
+> - Route 2 - the route where the CPSP connects directly to the iDEAL Hub
+> - Route 3 - the route where the merchant connects directly to the iDEAL Hub.
+
+For a full explanation, see the information at https://ideal-portal.ing.nl/idealDeveloperPortal/the-new-ideal or the text below:
 
 > ## The new iDEAL
 > 
