@@ -62,15 +62,13 @@ final class CreateTransactionResponse extends AbstractTransactionResponse {
 	}
 
 	/**
-	 * From remote JSON.
+	 * From remote object..
 	 * 
-	 * @param string $json JSON.
+	 * @param mixed $data Object.
 	 * @return self
 	 * @throws \InvalidArgumentException Throws an invalid argument exception if the JSON does not meet expectations.
 	 */
-	public static function from_remote_json( $json ) {
-		$data = \json_decode( $json );
-
+	public static function from_remote_object( $data ) {
 		if ( ! \is_object( $data ) ) {
 			throw new \InvalidArgumentException( 'JSON is not an object.' );
 		}

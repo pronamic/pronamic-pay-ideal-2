@@ -327,7 +327,7 @@ final class Client {
 	 * @return CreateTransactionResponse
 	 */
 	public function create_new_transaction( $access_token, CreateTransactionRequest $request ) {
-		$result = $this->request(
+		$response = $this->request(
 			$access_token,
 			'POST',
 			'/merchant-cpsp/transactions',
@@ -335,9 +335,9 @@ final class Client {
 			'201'
 		);
 
-		$body = \wp_remote_retrieve_body( $result );
+		$data = $response->json();
 
-		$response = CreateTransactionResponse::from_remote_json( $body );
+		$response = CreateTransactionResponse::from_remote_object( $data );
 
 		return $response;
 	}
@@ -351,7 +351,7 @@ final class Client {
 	 * @return GetTransactionResponse
 	 */
 	public function get_transaction_details( $access_token, $transaction_id ) {
-		$result = $this->request(
+		$response = $this->request(
 			$access_token,
 			'GET',
 			'/merchant-cpsp/transactions/' . $transaction_id,
@@ -359,8 +359,8 @@ final class Client {
 			'200'
 		);
 
-		$body = \wp_remote_retrieve_body( $result );
+		$data = $response->json();
 
-		return GetTransactionResponse::from_remote_json( $body );
+		return GetTransactionResponse::from_remote_object( $data );
 	}
 }
