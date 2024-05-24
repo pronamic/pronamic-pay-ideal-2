@@ -367,6 +367,8 @@ final class Integration extends AbstractGatewayIntegration {
 	 * @return void
 	 */
 	public function save_post( $post_id ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Is handled upstream?
+
 		$files = [
 			'_pronamic_gateway_ideal_2_acquirer_mtls_certificate',
 			'_pronamic_gateway_ideal_2_acquirer_mtls_private_key',
@@ -379,20 +381,24 @@ final class Integration extends AbstractGatewayIntegration {
 		];
 
 		foreach ( $files as $name ) {
-			if ( ! array_key_exists( $name, $_FILES ) ) {
+			if ( ! isset( $_FILES[ $name ]['error'] ) ) {
 				continue;
 			}
 
-			$file = $_FILES[ $name ];
-
-			if ( \UPLOAD_ERR_OK !== $file['error'] ) {
+			if ( ! isset( $_FILES[ $name ]['tmp_name'] ) ) {
 				continue;
 			}
 
-			$value = \file_get_contents( \wp_unslash( $file['tmp_name'] ) );
+			if ( \UPLOAD_ERR_OK !== $_FILES[ $name ]['error'] ) {
+				continue;
+			}
+
+			$value = \file_get_contents( \sanitize_text_field( \wp_unslash( $_FILES[ $name ]['tmp_name'] ) ) );
 
 			\update_post_meta( $post_id, $name, $value );
 		}
+
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
