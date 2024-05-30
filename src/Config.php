@@ -83,6 +83,13 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	public $reference = '';
 
 	/**
+	 * Live or test mode.
+	 *
+	 * @var string|null
+	 */
+	public $mode;
+
+	/**
 	 * Construct config.
 	 *
 	 * @param string     $merchant_id           Merchant ID.
