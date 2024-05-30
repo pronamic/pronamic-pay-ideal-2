@@ -106,6 +106,18 @@ final class CreateTransactionRequest implements RemoteSerializable {
 	public string $return_url;
 
 	/**
+	 * Issuer ID
+	 *
+	 * The business identifier code for the Issuer. Corresponding to iDEAL 1.0
+	 * field 'issuer.issuerId'.
+	 *
+	 * @link https://en.wikipedia.org/wiki/ISO_9362
+	 * @var string
+	 */
+	#[RemoteApiProperty( 'issuerId' )]
+	public ?string $issuer_id;
+
+	/**
 	 * Construct create transaction request.
 	 *
 	 * @param Amount                    $amount      Amount.

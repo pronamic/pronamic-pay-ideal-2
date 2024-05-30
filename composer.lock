@@ -139,12 +139,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pronamic/ideal-issuers.git",
-                "reference": "e04b9f8830620aae139f90a2211f7ab480a881f4"
+                "reference": "d7b13f66751d213722e0700a967df7143e01a37a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pronamic/ideal-issuers/zipball/e04b9f8830620aae139f90a2211f7ab480a881f4",
-                "reference": "e04b9f8830620aae139f90a2211f7ab480a881f4",
+                "url": "https://api.github.com/repos/pronamic/ideal-issuers/zipball/d7b13f66751d213722e0700a967df7143e01a37a",
+                "reference": "d7b13f66751d213722e0700a967df7143e01a37a",
                 "shasum": ""
             },
             "require": {
@@ -175,7 +175,7 @@
                 "issues": "https://github.com/pronamic/ideal-issuers/issues",
                 "source": "https://github.com/pronamic/ideal-issuers/tree/main"
             },
-            "time": "2024-05-30T10:02:14+00:00"
+            "time": "2024-05-30T10:14:45+00:00"
         },
         {
             "name": "pronamic/pronamic-wp-updater",
