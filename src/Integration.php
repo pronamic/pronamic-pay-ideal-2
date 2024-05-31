@@ -436,7 +436,7 @@ final class Integration extends AbstractGatewayIntegration {
 
 		$config->reference = (string) $this->get_meta( $post_id, 'ideal_2_reference' );
 
-		$config->mode = $this->mode;
+		$config->mode = $this->get_mode();
 
 		return $config;
 	}

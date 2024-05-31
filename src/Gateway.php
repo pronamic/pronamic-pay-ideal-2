@@ -45,9 +45,7 @@ final class Gateway extends PronamicGateway {
 
 		$this->config = $config;
 
-		if ( null !== $config->mode ) {
-			$this->set_mode( $config->mode );
-		}
+		$this->set_mode( $config->mode );
 
 		$this->set_method( self::METHOD_HTTP_REDIRECT );
 

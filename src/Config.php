@@ -85,9 +85,9 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	/**
 	 * Live or test mode.
 	 *
-	 * @var string|null
+	 * @var string
 	 */
-	public $mode;
+	public $mode = '';
 
 	/**
 	 * Construct config.
