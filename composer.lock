@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf500d8486d17cb539024fd7945d2ae4",
+    "content-hash": "3cec056d20b67038417019ab7ee8764c",
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
@@ -135,16 +135,16 @@
         },
         {
             "name": "pronamic/ideal-issuers",
-            "version": "dev-main",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pronamic/ideal-issuers.git",
-                "reference": "d7b13f66751d213722e0700a967df7143e01a37a"
+                "reference": "047b1c1842d623681a47ee535b2cb5d700ab1717"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pronamic/ideal-issuers/zipball/d7b13f66751d213722e0700a967df7143e01a37a",
-                "reference": "d7b13f66751d213722e0700a967df7143e01a37a",
+                "url": "https://api.github.com/repos/pronamic/ideal-issuers/zipball/047b1c1842d623681a47ee535b2cb5d700ab1717",
+                "reference": "047b1c1842d623681a47ee535b2cb5d700ab1717",
                 "shasum": ""
             },
             "require": {
@@ -154,7 +154,6 @@
                 "phpstan/phpstan": "^1.11",
                 "pronamic/wp-coding-standards": "^2.2"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -173,9 +172,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pronamic/ideal-issuers/issues",
-                "source": "https://github.com/pronamic/ideal-issuers/tree/main"
+                "source": "https://github.com/pronamic/ideal-issuers/tree/v1.0.0"
             },
-            "time": "2024-05-30T10:14:45+00:00"
+            "time": "2024-05-31T13:15:14+00:00"
         },
         {
             "name": "pronamic/pronamic-wp-updater",
@@ -8372,9 +8371,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "pronamic/ideal-issuers": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
