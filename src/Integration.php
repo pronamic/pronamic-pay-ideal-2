@@ -261,35 +261,22 @@ final class Integration extends AbstractGatewayIntegration {
 	public function field_private_key( $field ) {
 		$post_id = (int) \get_the_ID();
 
-		$private_key          = get_post_meta( $post_id, '_pronamic_gateway_ideal_private_key', true );
-		$private_key_password = get_post_meta( $post_id, '_pronamic_gateway_ideal_private_key_password', true );
-		$number_days_valid    = get_post_meta( $post_id, '_pronamic_gateway_number_days_valid', true );
-
-		if ( ! empty( $private_key_password ) && ! empty( $number_days_valid ) ) {
-			if ( \function_exists( '\escapeshellarg' ) ) {
-				$filename = __( 'ideal.key', 'pronamic-pay-ideal-2' );
-
-				$command = sprintf(
-					'openssl genrsa -aes128 -out %s -passout pass:%s 2048',
-					\escapeshellarg( $filename ),
-					\escapeshellarg( $private_key_password )
-				);
-
-				?>
-
-				<p><?php esc_html_e( 'OpenSSL command', 'pronamic-pay-ideal-2' ); ?></p>
-				<input id="pronamic_ideal_openssl_command_key" name="pronamic_ideal_openssl_command_key" value="<?php echo esc_attr( $command ); ?>" type="text" class="large-text code" readonly="readonly"/>
-
-				<?php
-			}
-		}
+		$private_key = get_post_meta( $post_id, $field['meta_key'], true );
 
 		?>
 		<p>
 			<?php
 
+			printf(
+				'<label class="pronamic-pay-form-control-file-button button">%s <input type="file" name="%s" /></label>',
+				esc_html__( 'Upload', 'pronamic-pay-ideal-2' ),
+				'_pronamic_gateway_ideal_private_key_file'
+			);
+
 			if ( ! empty( $private_key ) ) {
 				\wp_nonce_field( 'pronamic_pay_download_secret_key', 'pronamic_pay_download_secret_key_nonce' );
+
+				echo ' ';
 
 				submit_button(
 					__( 'Download', 'pronamic-pay-ideal-2' ),
@@ -297,15 +284,7 @@ final class Integration extends AbstractGatewayIntegration {
 					'download_secret_key',
 					false
 				);
-
-				echo ' ';
 			}
-
-			printf(
-				'<label class="pronamic-pay-form-control-file-button button">%s <input type="file" name="%s" /></label>',
-				esc_html__( 'Upload', 'pronamic-pay-ideal-2' ),
-				'_pronamic_gateway_ideal_private_key_file'
-			);
 
 			?>
 		</p>
@@ -336,15 +315,25 @@ final class Integration extends AbstractGatewayIntegration {
 				'name'  => \__( 'SHA Fingerprint', 'pronamic-pay-ideal-2' ),
 				'value' => $certificate->get_formatted_fingerprint(),
 			],
-			[
-				'name'  => \__( 'Valid From', 'pronamic-pay-ideal-2' ),
-				'value' => \date_i18n( $date_format, $certificate->get_valid_from_time() ),
-			],
-			[
-				'name'  => \__( 'Valid To', 'pronamic-pay-ideal-2' ),
-				'value' => \date_i18n( $date_format, $certificate->get_valid_to_time() ),
-			],
 		];
+
+		$valid_from = $certificate->get_valid_from_time();
+
+		if ( null !== $valid_from ) {
+			$defintiions[] = [
+				'name'  => \__( 'Valid From', 'pronamic-pay-ideal-2' ),
+				'value' => \date_i18n( $date_format, $valid_from ),
+			];
+		}
+
+		$valid_to = $certificate->get_valid_to_time();
+
+		if ( null !== $valid_to ) {
+			$defintiions[] = [
+				'name'  => \__( 'Valid To', 'pronamic-pay-ideal-2' ),
+				'value' => \date_i18n( $date_format, $valid_to ),
+			];
+		}
 
 		?>
 

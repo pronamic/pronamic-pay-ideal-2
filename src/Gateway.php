@@ -101,8 +101,6 @@ final class Gateway extends PronamicGateway {
 	public function start( Payment $payment ) {
 		$client = new Client( $this->config );
 
-		$configuration = $this->config;
-
 		$access_token = $this->get_cached_access_token();
 
 		// Reference.
@@ -117,8 +115,8 @@ final class Gateway extends PronamicGateway {
 		// Request.
 		$create_transaction_request = new CreateTransactionRequest(
 			new Amount( $payment->get_total_amount()->get_minor_units()->to_int() ),
-			$payment->get_description(),
-			$reference,
+			(string) $payment->get_description(),
+			(string) $reference,
 			new CreateTransactionCreditor( 'NL' ),
 			$payment->get_return_url()
 		);

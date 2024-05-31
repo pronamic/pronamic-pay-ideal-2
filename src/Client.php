@@ -11,7 +11,7 @@
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 use Pronamic\WordPress\Http\Facades\Http;
-use WP_Error;
+use Pronamic\WordPress\Http\Response;
 
 /**
  * Client class
@@ -26,7 +26,7 @@ final class Client {
 
 	/**
 	 * Construct client object.
-	 * 
+	 *
 	 * @param Config $config Configuration object.
 	 */
 	public function __construct( Config $config ) {
@@ -69,7 +69,7 @@ final class Client {
 			'x5t#S256' => self::base64_encode_url( \hash( 'sha256', $acquirer_signing_ssl_certificate->get_der(), true ) ),
 		];
 
-		$jws_payload = [
+		$jws_payload = (object) [
 			/**
 			 * The "iss" (issuer) claim identifies the principal that issued the JWT. Should be the merchant id.
 			 */
@@ -93,6 +93,10 @@ final class Client {
 			$this->config->acquirer_signing_ssl->private_key,
 			$this->config->acquirer_signing_ssl->private_key_password
 		);
+
+		if ( false === $private_key ) {
+			throw new \Exception( 'Could not load private key.' );
+		}
 
 		$jwt = new JsonWebToken( $jws_header, $jws_payload );
 
@@ -139,7 +143,7 @@ final class Client {
 				\sprintf(
 					'Access token request failed, unexpected response: %s - %s - %s',
 					\esc_url( $url ),
-					\esc_html( $response_code ),
+					\esc_html( (string) $response_code ),
 					\esc_html( $body )
 				),
 				(int) $response_code
@@ -176,7 +180,7 @@ final class Client {
 	 *
 	 * @link https://github.com/firebase/php-jwt/blob/e9690f56c0bf9cd670655add889b4e243e3ac576/src/JWT.php#L379-L405
 	 * @param mixed $value Value.
-	 * @return string
+	 * @return string|false
 	 */
 	public static function json_encode( $value ) {
 		return \wp_json_encode(
@@ -192,10 +196,11 @@ final class Client {
 
 	/**
 	 * Ensure response status.
-	 * 
+	 *
 	 * @param Response    $response                 Response.
 	 * @param null|string $expected_response_status Expected response status.
-	 * @throws Error Throws an exception if the response status does not meet expectations.
+	 * @return void
+	 * @throws ErrorResponse Throws an exception if the response status does not meet expectations.
 	 */
 	private function ensure_response_status( $response, $expected_response_status ) {
 		if ( null == $expected_response_status ) {
@@ -219,18 +224,23 @@ final class Client {
 
 	/**
 	 * Request.
-	 * 
+	 *
 	 * @param string      $access_token             Access token.
 	 * @param string      $method                   Method.
 	 * @param string      $endpoint                 Endpoint.
-	 * @param string|null $body                     Body.
+	 * @param object|null $body                     Body.
 	 * @param string      $expected_response_status Expected response status.
-	 * @return array|WP_Error
+	 * @return Response
+	 * @throws \Exception Throws an exception if private key can not be loaded.
 	 */
 	private function request( $access_token, $method, $endpoint, $body, $expected_response_status ) {
 		$configuration = $this->config;
 
 		$jwt = JsonWebToken::from_string( $access_token );
+
+		if ( ! is_object( $jwt->payload ) ) {
+			throw new \Exception( 'Invalid JSON Web Token without payload.' );
+		}
 
 		$url = $configuration->ideal_hub_url . $endpoint;
 
@@ -246,19 +256,21 @@ final class Client {
 
 		$ideal_hub_signing_ssl_certificate = new Certificate( $configuration->ideal_hub_signing_ssl->certificate );
 
+		$jwt_payload = new ObjectAccess( $jwt->payload );
+
 		$jws_header = [
 			'typ'                           => 'jose+json',
 			'x5c'                           => [
 				\base64_encode( $ideal_hub_signing_ssl_certificate->get_der() ),
 			],
 			'alg'                           => $configuration->jws_algorithm,
-			'https://idealapi.nl/sub'       => $jwt->payload->sub,
-			'https://idealapi.nl/iss'       => $jwt->payload->sub,
-			'https://idealapi.nl/scope'     => $jwt->payload->scope,
-			'https://idealapi.nl/acq'       => $jwt->payload->iss,
+			'https://idealapi.nl/sub'       => $jwt_payload->get_property( 'sub' ),
+			'https://idealapi.nl/iss'       => $jwt_payload->get_property( 'sub' ),
+			'https://idealapi.nl/scope'     => $jwt_payload->get_property( 'scope' ),
+			'https://idealapi.nl/acq'       => $jwt_payload->get_property( 'iss' ),
 			'https://idealapi.nl/iat'       => $date->format( \DATE_ATOM ),
 			'https://idealapi.nl/jti'       => $request_id,
-			'https://idealapi.nl/token-jti' => $jwt->payload->jti,
+			'https://idealapi.nl/token-jti' => $jwt_payload->get_property( 'jti' ),
 			'https://idealapi.nl/path'      => \wp_parse_url( $url, \PHP_URL_PATH ),
 			'crit'                          => [
 				'https://idealapi.nl/sub',
@@ -276,6 +288,10 @@ final class Client {
 			$configuration->ideal_hub_signing_ssl->private_key,
 			$configuration->ideal_hub_signing_ssl->private_key_password
 		);
+
+		if ( false === $private_key ) {
+			throw new \Exception( 'Could not load private key.' );
+		}
 
 		$jwt = new JsonWebToken( $jws_header, $body );
 
@@ -318,7 +334,7 @@ final class Client {
 
 	/**
 	 * Create new transaction.
-	 * 
+	 *
 	 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417604276/Standard+iDEAL+Payment+Direct+Connection
 	 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417538917/iDEAL+-+Merchant+CPSP+API
 	 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417604322/Security+for+Direct+Connection
@@ -344,7 +360,7 @@ final class Client {
 
 	/**
 	 * Get transaction details.
-	 * 
+	 *
 	 * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417538917/iDEAL+-+Merchant+CPSP+API
 	 * @param string $access_token Access token.
 	 * @param string $transaction_id Transaction ID.
