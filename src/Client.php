@@ -12,7 +12,6 @@ namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 use Pronamic\WordPress\Http\Facades\Http;
 use Pronamic\WordPress\Http\Response;
-use WP_Error;
 
 /**
  * Client class
