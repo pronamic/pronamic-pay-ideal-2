@@ -101,8 +101,6 @@ final class Gateway extends PronamicGateway {
 	public function start( Payment $payment ) {
 		$client = new Client( $this->config );
 
-		$configuration = $this->config;
-
 		$access_token = $this->get_cached_access_token();
 
 		// Reference.
