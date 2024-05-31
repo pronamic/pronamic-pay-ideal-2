@@ -408,8 +408,6 @@ final class Integration extends AbstractGatewayIntegration {
 	 * @return Config
 	 */
 	public function get_config( $post_id ) {
-		$mode = $this->get_mode();
-
 		$config = new Config(
 			(string) $this->get_meta( $post_id, 'ideal_2_merchant_id' ),
 			$this->acquirer_url,
@@ -438,6 +436,8 @@ final class Integration extends AbstractGatewayIntegration {
 
 		$config->reference = (string) $this->get_meta( $post_id, 'ideal_2_reference' );
 
+		$config->mode = $this->get_mode();
+
 		return $config;
 	}
 
@@ -449,8 +449,6 @@ final class Integration extends AbstractGatewayIntegration {
 	 */
 	public function get_gateway( $post_id ) {
 		$gateway = new Gateway( $this->get_config( $post_id ) );
-
-		$gateway->set_mode( $this->mode );
 
 		return $gateway;
 	}
