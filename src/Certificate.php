@@ -84,10 +84,14 @@ class Certificate {
 	/**
 	 * Get 'Valid from' timestamp.
 	 *
-	 * @return int
+	 * @return int|null
 	 */
 	public function get_valid_from_time() {
 		$info = \openssl_x509_parse( $this->pem );
+
+		if ( ! \is_array( $info ) || ! \array_key_exists( 'validFrom_time_t', $info ) ) {
+			return null;
+		}
 
 		return $info['validFrom_time_t'];
 	}
@@ -95,10 +99,14 @@ class Certificate {
 	/**
 	 * Get 'Valid to' timestamp.
 	 *
-	 * @return int
+	 * @return int|null
 	 */
 	public function get_valid_to_time() {
 		$info = \openssl_x509_parse( $this->pem );
+
+		if ( ! \is_array( $info ) || ! \array_key_exists( 'validTo_time_t', $info ) ) {
+			return null;
+		}
 
 		return $info['validTo_time_t'];
 	}

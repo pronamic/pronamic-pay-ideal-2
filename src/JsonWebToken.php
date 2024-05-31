@@ -12,38 +12,39 @@ namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 use Firebase\JWT\JWT;
 use JsonSerializable;
+use OpenSSLAsymmetricKey;
 
 /**
  * JSON Web Token class
  */
-final class JsonWebToken implements \JsonSerializable {
+final class JsonWebToken implements JsonSerializable {
 	/**
 	 * Header.
-	 * 
-	 * @var string
+	 *
+	 * @var array<string, mixed>
 	 */
 	public $header;
 
 	/**
 	 * Payload.
-	 * 
-	 * @var string|null
+	 *
+	 * @var object|null
 	 */
 	public $payload;
 
 	/**
 	 * Signature.
-	 * 
+	 *
 	 * @var string
 	 */
 	public $signature;
 
 	/**
 	 * Construct JSON web token object.
-	 * 
-	 * @param string      $header    Header.
-	 * @param string|null $payload   Payload.
-	 * @param string      $signature Signatue.
+	 *
+	 * @param array<string, mixed> $header    Header.
+	 * @param object|null          $payload   Payload.
+	 * @param string               $signature Signature.
 	 */
 	public function __construct( $header, $payload = null, $signature = '' ) {
 		$this->header    = $header;
@@ -53,7 +54,7 @@ final class JsonWebToken implements \JsonSerializable {
 
 	/**
 	 * Get signing string.
-	 * 
+	 *
 	 * @return string
 	 */
 	public function get_signing_string() {
@@ -63,8 +64,8 @@ final class JsonWebToken implements \JsonSerializable {
 	/**
 	 * Sign this token with the specified private key and algorithm.
 	 *
-	 * @param string $private_key Private key.
-	 * @param string $algorithm   Algorithm.
+	 * @param OpenSSLAsymmetricKey|resource $private_key Private key.
+	 * @param string                        $algorithm   Algorithm.
 	 * @return void
 	 */
 	public function sign( $private_key, $algorithm ) {
@@ -86,8 +87,25 @@ final class JsonWebToken implements \JsonSerializable {
 	 *
 	 * @param string $format Format.
 	 * @return string
+	 * @throws \Exception Throws exception when unable to JSON encode.
 	 */
 	private function format( $format = '$header.$payload.$signature' ) {
+		$header = Client::json_encode( $this->header );
+
+		if ( false === $header ) {
+			throw new \Exception( 'Unable to JSON encode header for formatted JWT.' );
+		}
+
+		$payload = '';
+
+		if ( null !== $this->payload ) {
+			$payload = Client::json_encode( $this->payload );
+
+			if ( false === $payload ) {
+				throw new \Exception( 'Unable to JSON encode payload for formatted JWT.' );
+			}
+		}
+
 		/**
 		 * Segments.
 		 *
@@ -101,8 +119,8 @@ final class JsonWebToken implements \JsonSerializable {
 		$value = \strtr(
 			$format,
 			[
-				'$header'    => Client::base64_encode_url( Client::json_encode( $this->header ) ),
-				'$payload'   => ( null === $this->payload ) ? '' : Client::base64_encode_url( Client::json_encode( $this->payload ) ),
+				'$header'    => Client::base64_encode_url( $header ),
+				'$payload'   => ( null === $this->payload ) ? '' : Client::base64_encode_url( $payload ),
 				'$signature' => Client::base64_encode_url( $this->signature ),
 			]
 		);

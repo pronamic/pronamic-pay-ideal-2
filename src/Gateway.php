@@ -115,8 +115,8 @@ final class Gateway extends PronamicGateway {
 		// Request.
 		$create_transaction_request = new CreateTransactionRequest(
 			new Amount( $payment->get_total_amount()->get_minor_units()->to_int() ),
-			$payment->get_description(),
-			$reference,
+			(string) $payment->get_description(),
+			(string) $reference,
 			new CreateTransactionCreditor( 'NL' ),
 			$payment->get_return_url()
 		);
