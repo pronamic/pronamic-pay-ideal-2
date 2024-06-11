@@ -42,6 +42,7 @@
 		"pronamic/ideal-issuers": "^1.1",
 		"pronamic/pronamic-wp-updater": "^1.0",
 		"pronamic/wp-http": "^1.2",
+		"pronamic/wp-http-extended-ssl-support": "dev-main",
 		"wp-pay/core": "^4.19"
 	},
 	"require-dev": {
