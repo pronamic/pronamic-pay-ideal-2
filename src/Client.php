@@ -115,13 +115,13 @@ final class Client {
 		$result = \wp_remote_post(
 			$url,
 			[
-				'headers'                  => [
+				'headers'              => [
 					'Content-Type' => 'application/x-www-form-urlencoded',
 				],
-				'body'                     => $body,
-				'ssl_certificate_blob'     => $this->config->acquirer_mtls_ssl->certificate,
-				'ssl_private_key_blob'     => $this->config->acquirer_mtls_ssl->private_key,
-				'ssl_private_key_password' => $this->config->acquirer_mtls_ssl->private_key_password,
+				'body'                 => $body,
+				'ssl_certificate_blob' => $this->config->acquirer_mtls_ssl->certificate,
+				'ssl_key_blob'         => $this->config->acquirer_mtls_ssl->private_key,
+				'ssl_key_password'     => $this->config->acquirer_mtls_ssl->private_key_password,
 			]
 		);
 
@@ -312,18 +312,18 @@ final class Client {
 		$response = Http::request(
 			$url,
 			[
-				'method'                   => $method,
-				'headers'                  => [
+				'method'               => $method,
+				'headers'              => [
 					'Accept'        => 'application/json',
 					'Request-ID'    => $request_id,
 					'Authorization' => 'Bearer ' . $access_token,
 					'Signature'     => $signature,
 					'Content-Type'  => 'application/json',
 				],
-				'body'                     => ( null === $body ) ? null : Client::json_encode( $body ),
-				'ssl_certificate_blob'     => $configuration->ideal_hub_mtls_ssl->certificate,
-				'ssl_private_key_blob'     => $configuration->ideal_hub_mtls_ssl->private_key,
-				'ssl_private_key_password' => $configuration->ideal_hub_mtls_ssl->private_key_password,
+				'body'                 => ( null === $body ) ? null : Client::json_encode( $body ),
+				'ssl_certificate_blob' => $configuration->ideal_hub_mtls_ssl->certificate,
+				'ssl_key_blob'         => $configuration->ideal_hub_mtls_ssl->private_key,
+				'ssl_key_password'     => $configuration->ideal_hub_mtls_ssl->private_key_password,
 			]
 		);
 
