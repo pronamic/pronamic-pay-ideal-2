@@ -22,29 +22,29 @@ final class SSLContext {
 	public $certificate;
 
 	/**
-	 * Private key.
+	 * Key.
 	 * 
 	 * @var string
 	 */
-	public $private_key;
+	public $key;
 
 	/**
-	 * Private key password.
+	 * Key password.
 	 * 
 	 * @var string
 	 */
-	public $private_key_password;
+	public $key_password;
 
 	/**
 	 * Construct SSL context.
 	 * 
 	 * @param string $certificate          Certificate.
-	 * @param string $private_key          Private key.
-	 * @param string $private_key_password Private key password.
+	 * @param string $key          Key.
+	 * @param string $key_password Key password.
 	 */
-	public function __construct( $certificate, $private_key, $private_key_password ) {
-		$this->certificate          = $certificate;
-		$this->private_key          = $private_key;
-		$this->private_key_password = $private_key_password;
+	public function __construct( $certificate, $key, $key_password ) {
+		$this->certificate  = $certificate;
+		$this->key          = $key;
+		$this->key_password = $key_password;
 	}
 }

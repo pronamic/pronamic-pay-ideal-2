@@ -90,8 +90,8 @@ final class Client {
 		];
 
 		$private_key = openssl_pkey_get_private(
-			$this->config->acquirer_signing_ssl->private_key,
-			$this->config->acquirer_signing_ssl->private_key_password
+			$this->config->acquirer_signing_ssl->key,
+			$this->config->acquirer_signing_ssl->key_password
 		);
 
 		if ( false === $private_key ) {
@@ -120,8 +120,8 @@ final class Client {
 				],
 				'body'                 => $body,
 				'ssl_certificate_blob' => $this->config->acquirer_mtls_ssl->certificate,
-				'ssl_key_blob'         => $this->config->acquirer_mtls_ssl->private_key,
-				'ssl_key_password'     => $this->config->acquirer_mtls_ssl->private_key_password,
+				'ssl_key_blob'         => $this->config->acquirer_mtls_ssl->key,
+				'ssl_key_password'     => $this->config->acquirer_mtls_ssl->key_password,
 			]
 		);
 
@@ -285,8 +285,8 @@ final class Client {
 		];
 
 		$private_key = \openssl_pkey_get_private(
-			$configuration->ideal_hub_signing_ssl->private_key,
-			$configuration->ideal_hub_signing_ssl->private_key_password
+			$configuration->ideal_hub_signing_ssl->key,
+			$configuration->ideal_hub_signing_ssl->key_password
 		);
 
 		if ( false === $private_key ) {
@@ -322,8 +322,8 @@ final class Client {
 				],
 				'body'                 => ( null === $body ) ? null : Client::json_encode( $body ),
 				'ssl_certificate_blob' => $configuration->ideal_hub_mtls_ssl->certificate,
-				'ssl_key_blob'         => $configuration->ideal_hub_mtls_ssl->private_key,
-				'ssl_key_password'     => $configuration->ideal_hub_mtls_ssl->private_key_password,
+				'ssl_key_blob'         => $configuration->ideal_hub_mtls_ssl->key,
+				'ssl_key_password'     => $configuration->ideal_hub_mtls_ssl->key_password,
 			]
 		);
 
