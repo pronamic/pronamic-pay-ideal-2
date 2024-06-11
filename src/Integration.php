@@ -64,38 +64,7 @@ final class Integration extends AbstractGatewayIntegration {
 		$this->acquirer_url  = $args['acquirer_url'];
 		$this->ideal_hub_url = $args['ideal_hub_url'];
 
-		/**
-		* Support TLS Client Certificates.
-		*
-		* @link https://core.trac.wordpress.org/ticket/34883#comment:3
-		* @link https://github.com/WordPress/Requests/issues/377
-		*/
-		\add_action(
-			'http_api_curl',
-			function ( $handle, $parsed_args ) {
-				if ( \array_key_exists( 'ssl_private_key_password', $parsed_args ) ) {
-					// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- WordPress requests library does not support this yet.
-					\curl_setopt( $handle, \CURLOPT_SSLKEYPASSWD, $parsed_args['ssl_private_key_password'] );
-				}
-
-				/**
-				* Curl blob option.
-				*
-				* @link https://github.com/php/php-src/blob/php-8.1.0/ext/curl/interface.c#L2935-L2955
-				*/
-				if ( \array_key_exists( 'ssl_certificate_blob', $parsed_args ) ) {
-					// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- WordPress requests library does not support this yet.
-					\curl_setopt( $handle, \CURLOPT_SSLCERT_BLOB, $parsed_args['ssl_certificate_blob'] );
-				}
-
-				if ( \array_key_exists( 'ssl_private_key_blob', $parsed_args ) ) {
-					// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- WordPress requests library does not support this yet.
-					\curl_setopt( $handle, \CURLOPT_SSLKEY_BLOB, $parsed_args['ssl_private_key_blob'] );
-				}
-			},
-			10,
-			2
-		);
+		\Pronamic\WpExtendedSslSupport\Plugin::bootstrap();
 	}
 
 	/**
