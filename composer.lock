@@ -361,12 +361,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pronamic/wp-http-extended-ssl-support.git",
-                "reference": "826aad52c3d85e21fb28e3c2129378757d0d5495"
+                "reference": "7acaa731e9fe3d3dfbd84bbb52765fda6cfa7d26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pronamic/wp-http-extended-ssl-support/zipball/826aad52c3d85e21fb28e3c2129378757d0d5495",
-                "reference": "826aad52c3d85e21fb28e3c2129378757d0d5495",
+                "url": "https://api.github.com/repos/pronamic/wp-http-extended-ssl-support/zipball/7acaa731e9fe3d3dfbd84bbb52765fda6cfa7d26",
+                "reference": "7acaa731e9fe3d3dfbd84bbb52765fda6cfa7d26",
                 "shasum": ""
             },
             "require": {
@@ -397,7 +397,7 @@
                 "issues": "https://github.com/pronamic/wp-http-extended-ssl-support/issues",
                 "source": "https://github.com/pronamic/wp-http-extended-ssl-support/tree/main"
             },
-            "time": "2024-06-11T11:23:29+00:00"
+            "time": "2024-06-11T14:10:31+00:00"
         },
         {
             "name": "pronamic/wp-money",
