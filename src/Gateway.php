@@ -168,7 +168,7 @@ final class Gateway extends PronamicGateway {
 	public function get_cached_access_token() {
 		$client = new Client( $this->config );
 
-		$cache_key = 'pronamic_gateway_ideal_2_access_token_' . $this->config->merchant_id;
+		$cache_key = \sprintf( 'pronamic_gateway_ideal_2_access_token_%s_%s', $this->config->merchant_id, $this->config->mode );
 
 		$access_token_response = null;
 
