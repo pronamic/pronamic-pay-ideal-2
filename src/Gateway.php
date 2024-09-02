@@ -184,9 +184,9 @@ final class Gateway extends PronamicGateway {
 
 		if ( null === $access_token_response ) {
 			$access_token_response = $client->get_access_token();
-		}
 
-		\set_transient( $cache_key, wp_json_encode( $access_token_response ), $access_token_response->expires_in );
+			\set_transient( $cache_key, wp_json_encode( $access_token_response ), $access_token_response->expires_in );
+		}
 
 		return $access_token_response->access_token;
 	}
