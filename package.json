@@ -1,6 +1,6 @@
 {
 	"name": "@pronamic/pronamic-pay-ideal-2",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "This plugin contains the Pronamic Pay integration for iDEAL 2.0.",
 	"author": "Pronamic",
 	"license": "GPL-2.0-or-later",
