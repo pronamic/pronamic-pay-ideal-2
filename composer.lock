@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2acb837b5007b4c48076bdaf99353b86",
+    "content-hash": "8f5934ff10a19fbaf153bcbb4e45eb06",
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
@@ -357,16 +357,16 @@
         },
         {
             "name": "pronamic/wp-http-extended-ssl-support",
-            "version": "dev-main",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pronamic/wp-http-extended-ssl-support.git",
-                "reference": "a5e44e9cc216f9527796fe3473e06802ce2df85a"
+                "reference": "b0ac146117eb557de787acea3babbe3d82e9eb01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pronamic/wp-http-extended-ssl-support/zipball/a5e44e9cc216f9527796fe3473e06802ce2df85a",
-                "reference": "a5e44e9cc216f9527796fe3473e06802ce2df85a",
+                "url": "https://api.github.com/repos/pronamic/wp-http-extended-ssl-support/zipball/b0ac146117eb557de787acea3babbe3d82e9eb01",
+                "reference": "b0ac146117eb557de787acea3babbe3d82e9eb01",
                 "shasum": ""
             },
             "require": {
@@ -378,7 +378,6 @@
                 "pronamic/wp-coding-standards": "^2.2",
                 "szepeviktor/phpstan-wordpress": "^1.3"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -397,9 +396,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pronamic/wp-http-extended-ssl-support/issues",
-                "source": "https://github.com/pronamic/wp-http-extended-ssl-support/tree/main"
+                "source": "https://github.com/pronamic/wp-http-extended-ssl-support/tree/v1.0.0"
             },
-            "time": "2024-06-21T12:48:30+00:00"
+            "time": "2024-09-09T13:56:35+00:00"
         },
         {
             "name": "pronamic/wp-money",
@@ -8487,9 +8486,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "pronamic/wp-http-extended-ssl-support": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
