@@ -108,6 +108,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'meta_key' => '_pronamic_gateway_ideal_2_acquirer_mtls_private_key_password',
 			'type'     => 'text',
 			'classes'  => [ 'code' ],
+			'input'    => [ $this, 'input_password' ],
 		];
 
 		/**
@@ -135,6 +136,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'meta_key' => '_pronamic_gateway_ideal_2_acquirer_signing_private_key_password',
 			'type'     => 'text',
 			'classes'  => [ 'code' ],
+			'input'    => [ $this, 'input_password' ],
 		];
 
 		/**
@@ -162,6 +164,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'meta_key' => '_pronamic_gateway_ideal_2_ideal_hub_mtls_private_key_password',
 			'type'     => 'text',
 			'classes'  => [ 'code' ],
+			'input'    => [ $this, 'input_password' ],
 		];
 
 		/**
@@ -189,6 +192,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'meta_key' => '_pronamic_gateway_ideal_2_ideal_hub_signing_private_key_password',
 			'type'     => 'text',
 			'classes'  => [ 'code' ],
+			'input'    => [ $this, 'input_password' ],
 		];
 
 		$fields[] = [
@@ -219,6 +223,25 @@ final class Integration extends AbstractGatewayIntegration {
 		];
 
 		return $fields;
+	}
+
+	/**
+	 * Save password input.
+	 *
+	 * @param string $name Setting name.
+	 * @return string
+	 */
+	public function input_password( $name ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+
+		if ( ! \array_key_exists( $name, $_POST ) ) {
+			return '';
+		}
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Password can contain whitespace, HTML tags and percent-encoded characters.
+		return $_POST[ $name ];
+
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
