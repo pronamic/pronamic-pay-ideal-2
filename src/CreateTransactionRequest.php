@@ -85,7 +85,7 @@ final class CreateTransactionRequest implements RemoteSerializable {
 	 * A minimum length of 1 and a maximum length of 512 should be considered
 	 * for this field. (They are not explicitly mentioned as properties since
 	 * this causes code generation issues for URI fields)
-	 * 
+	 *
 	 * @var string|null
 	 */
 	#[RemoteApiProperty( 'transactionCallbackUrl' )]
@@ -104,18 +104,6 @@ final class CreateTransactionRequest implements RemoteSerializable {
 	 */
 	#[RemoteApiProperty( 'returnUrl' )]
 	public string $return_url;
-
-	/**
-	 * Issuer ID
-	 *
-	 * The business identifier code for the Issuer. Corresponding to iDEAL 1.0
-	 * field 'issuer.issuerId'.
-	 *
-	 * @link https://en.wikipedia.org/wiki/ISO_9362
-	 * @var string
-	 */
-	#[RemoteApiProperty( 'issuerId' )]
-	public ?string $issuer_id;
 
 	/**
 	 * Construct create transaction request.
