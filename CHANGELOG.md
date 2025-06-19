@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-06-19
+
+### Commits
+
+- Merge pull request #12 from pronamic/remove-ideal-issuers-field ([3742835](https://github.com/pronamic/pronamic-pay-ideal-2/commit/3742835ef1aee32ae935df2d53e9d34f3d0e5487))
+- Removed iDEAL issuers field. ([0b72c49](https://github.com/pronamic/pronamic-pay-ideal-2/commit/0b72c49d1032e7c3932f140113b631220f29128c))
+
+### Composer
+
+- Removed `pronamic/ideal-issuers` `^1.1`.
+- Changed `automattic/jetpack-autoloader` from `v3.1.0` to `v3.1.3`.
+	Release notes: https://github.com/Automattic/jetpack-autoloader/releases/tag/v3.1.3
+- Changed `firebase/php-jwt` from `v6.10.1` to `v6.11.1`.
+	Release notes: https://github.com/firebase/php-jwt/releases/tag/v6.11.1
+- Changed `pronamic/wp-http` from `v1.2.3` to `v1.2.4`.
+	Release notes: https://github.com/pronamic/wp-http/releases/tag/v1.2.4
+- Changed `wp-pay/core` from `v4.22.0` to `v4.26.0`.
+	Release notes: https://github.com/pronamic/wp-pay-core/releases/tag/v4.26.0
+
+Full set of changes: [`1.1.1...1.2.0`][1.2.0]
+
+[1.2.0]: https://github.com/pronamic/pronamic-pay-ideal-2/compare/v1.1.1...v1.2.0
+
 ## [1.1.1] - 2024-09-09
 
 ### Fixed
