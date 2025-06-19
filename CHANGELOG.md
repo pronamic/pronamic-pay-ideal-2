@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2025-06-19
+
+### Commits
+
+- Also allow Jetpack autoloader 4 and 5. ([8116e21](https://github.com/pronamic/pronamic-pay-ideal-2/commit/8116e21bcc64900ea3f52b1db8721181fe6fb3f4))
+
+### Composer
+
+- Changed `automattic/jetpack-autoloader` from `v3.1.3` to `v5.0.7`.
+	Release notes: https://github.com/Automattic/jetpack-autoloader/releases/tag/v5.0.7
+- Changed `pronamic/pronamic-wp-updater` from `v1.0.2` to `v1.0.3`.
+	Release notes: https://github.com/pronamic/pronamic-wp-updater/releases/tag/v1.0.3
+
+Full set of changes: [`1.2.0...1.2.1`][1.2.1]
+
+[1.2.1]: https://github.com/pronamic/pronamic-pay-ideal-2/compare/v1.2.0...v1.2.1
+
 ## [1.2.0] - 2025-06-19
 
 ### Commits
