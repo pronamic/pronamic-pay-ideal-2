@@ -26,6 +26,8 @@
 
 declare(strict_types=1);
 
+namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -45,7 +47,7 @@ if ( \file_exists( $autoload_path ) ) {
 add_filter(
 	'pronamic_pay_gateways',
 	function ( $gateways ) {
-		$gateways[] = new \Pronamic\WordPress\Pay\Gateways\IDeal2\Integration(
+		$gateways[] = new Integration(
 			[
 				'id'            => 'ing-ideal-2-test',
 				'name'          => 'ING - iDEAL 2.0 - Test',
@@ -56,7 +58,7 @@ add_filter(
 			]
 		);
 
-		$gateways[] = new \Pronamic\WordPress\Pay\Gateways\IDeal2\Integration(
+		$gateways[] = new Integration(
 			[
 				'id'            => 'ing-ideal-2',
 				'name'          => 'ING - iDEAL 2.0',
