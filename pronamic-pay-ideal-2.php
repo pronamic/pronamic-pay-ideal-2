@@ -13,7 +13,7 @@
  * Description:       This plugin contains the Pronamic Pay integration for iDEAL 2.0.
  * Version:           1.2.1
  * Requires at least: 6.2
- * Requires PHP:      8.0
+ * Requires PHP:      8.2
  * Author:            Pronamic
  * Author URI:        https://www.pronamic.eu/
  * Text Domain:       pronamic-pay-ideal-2
