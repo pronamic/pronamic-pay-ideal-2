@@ -24,6 +24,8 @@
  * GitHub URI:        https://github.com/pronamic/pronamic-pay-ideal-2
  */
 
+declare(strict_types=1);
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
