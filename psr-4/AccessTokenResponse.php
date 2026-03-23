@@ -8,6 +8,8 @@
  * @package   Pronamic\WordPress\Pay\Gateways\IDeal2
  */
 
+declare(strict_types=1);
+
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 use JsonSerializable;
@@ -18,35 +20,35 @@ use JsonSerializable;
 final class AccessTokenResponse implements \JsonSerializable {
 	/**
 	 * Access token.
-	 * 
+	 *
 	 * @var string
 	 */
 	public string $access_token;
 
 	/**
 	 * Scope.
-	 * 
+	 *
 	 * @var string
 	 */
 	public string $scope;
 
 	/**
 	 * Token type.
-	 * 
+	 *
 	 * @var string
 	 */
 	public string $token_type;
 
 	/**
 	 * Expires in.
-	 * 
+	 *
 	 * @var int
 	 */
 	public int $expires_in;
 
 	/**
 	 * Construct access token response object.
-	 * 
+	 *
 	 * @param string $access_token Access token.
 	 * @param string $scope        Scope.
 	 * @param string $token_type   Token type.
@@ -61,7 +63,7 @@ final class AccessTokenResponse implements \JsonSerializable {
 
 	/**
 	 * JSON serialize.
-	 * 
+	 *
 	 * @return self
 	 */
 	public function jsonSerialize(): mixed {
@@ -70,7 +72,7 @@ final class AccessTokenResponse implements \JsonSerializable {
 
 	/**
 	 * From remote JSON.
-	 * 
+	 *
 	 * @param string $json JSON.
 	 * @return self
 	 * @throws \InvalidArgumentException Throws an invalid argument exception if the JSON does not meet expectations.

@@ -8,6 +8,8 @@
  * @package   Pronamic\Moneybird
  */
 
+declare(strict_types=1);
+
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 /**

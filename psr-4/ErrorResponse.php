@@ -8,6 +8,8 @@
  * @package   Pronamic\Moneybird
  */
 
+declare(strict_types=1);
+
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 use Exception;
@@ -19,28 +21,28 @@ use Throwable;
 final class ErrorResponse extends Exception {
 	/**
 	 * Error code.
-	 * 
+	 *
 	 * @var string
 	 */
 	public $error_code;
 
 	/**
 	 * Error message.
-	 * 
+	 *
 	 * @var string
 	 */
 	public $error_message;
 
 	/**
 	 * Trace ID.
-	 * 
+	 *
 	 * @var string|null
 	 */
 	public $trace_id;
 
 	/**
 	 * Construct error resposne.
-	 * 
+	 *
 	 * @param string         $error_code    Error response code.
 	 * @param string         $error_message Error response message.
 	 * @param int            $code          Code.
@@ -61,7 +63,7 @@ final class ErrorResponse extends Exception {
 
 	/**
 	 * Error from response object.
-	 * 
+	 *
 	 * @param object    $data     Data.
 	 * @param int       $code     Code.
 	 * @param Throwable $previous The previous exception used for the exception chaining.

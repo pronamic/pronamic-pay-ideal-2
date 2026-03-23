@@ -8,6 +8,8 @@
  * @package   Pronamic\WordPress\Pay\Gateways\IDeal2
  */
 
+declare(strict_types=1);
+
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 /**
@@ -25,7 +27,7 @@ final class CreateTransactionCreditor implements RemoteSerializable {
 	 *
 	 * Two-letter country code according to ISO 3166-1 alpha-2 standard.
 	 * It indicates the origin country of the (sub)merchant.
-	 * 
+	 *
 	 * @var string
 	 */
 	#[RemoteApiProperty( 'countryCode' )]

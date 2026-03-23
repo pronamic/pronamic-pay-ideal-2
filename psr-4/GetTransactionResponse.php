@@ -8,6 +8,8 @@
  * @package   Pronamic\WordPress\Pay\Gateways\IDeal2
  */
 
+declare(strict_types=1);
+
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 /**
@@ -18,14 +20,14 @@ namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 final class GetTransactionResponse extends AbstractTransactionResponse {
 	/**
 	 * Transaction status.
-	 * 
+	 *
 	 * @var TransactionStatus|null
 	 */
 	public ?TransactionStatus $status;
 
 	/**
 	 * From remote object.
-	 * 
+	 *
 	 * @param mixed $data Object.
 	 * @return self
 	 * @throws \InvalidArgumentException Throws an invalid argument exception if the JSON does not meet expectations.

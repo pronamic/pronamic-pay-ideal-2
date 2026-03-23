@@ -8,6 +8,8 @@
  * @package   Pronamic\WordPress\Pay\Gateways\IDeal2
  */
 
+declare(strict_types=1);
+
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 /**
@@ -18,7 +20,7 @@ namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 abstract class AbstractTransactionResponse {
 	/**
 	 * Transaction ID.
-	 * 
+	 *
 	 * @var string
 	 */
 	#[RemoteApiProperty( 'transactionId' )]
@@ -26,7 +28,7 @@ abstract class AbstractTransactionResponse {
 
 	/**
 	 * Created date timestamp.
-	 * 
+	 *
 	 * @var string
 	 */
 	#[RemoteApiProperty( 'createdDateTimestamp' )]
@@ -34,7 +36,7 @@ abstract class AbstractTransactionResponse {
 
 	/**
 	 * Expiry date timestamp.
-	 * 
+	 *
 	 * @var string
 	 */
 	#[RemoteApiProperty( 'expiryDateTimestamp' )]
@@ -42,7 +44,7 @@ abstract class AbstractTransactionResponse {
 
 	/**
 	 * Amount.
-	 * 
+	 *
 	 * @var Amount
 	 */
 	#[RemoteApiProperty( 'amount' )]
@@ -50,7 +52,7 @@ abstract class AbstractTransactionResponse {
 
 	/**
 	 * Creditor.
-	 * 
+	 *
 	 * @var mixed
 	 */
 	#[RemoteApiProperty( 'creditor' )]
@@ -58,7 +60,7 @@ abstract class AbstractTransactionResponse {
 
 	/**
 	 * Description
-	 * 
+	 *
 	 * @var string
 	 */
 	#[RemoteApiProperty( 'description' )]
@@ -66,7 +68,7 @@ abstract class AbstractTransactionResponse {
 
 	/**
 	 * Reference.
-	 * 
+	 *
 	 * @var string
 	 */
 	#[RemoteApiProperty( 'reference' )]
@@ -74,7 +76,7 @@ abstract class AbstractTransactionResponse {
 
 	/**
 	 * Transaction type.
-	 * 
+	 *
 	 * @var string
 	 */
 	#[RemoteApiProperty( 'transactionType' )]
@@ -82,7 +84,7 @@ abstract class AbstractTransactionResponse {
 
 	/**
 	 * Construct abstract transaction response.
-	 * 
+	 *
 	 * @param string $transaction_id         Transaction ID.
 	 * @param string $created_date_timestamp Created date timestamp.
 	 * @param string $expiry_date_timestamp  Expiry date timestamp.

@@ -8,6 +8,8 @@
  * @package   Pronamic\WordPress\Pay\Gateways\IDeal2
  */
 
+declare(strict_types=1);
+
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 /**
@@ -16,28 +18,28 @@ namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 final class SSLContext {
 	/**
 	 * Certificate.
-	 * 
+	 *
 	 * @var string
 	 */
 	public $certificate;
 
 	/**
 	 * Key.
-	 * 
+	 *
 	 * @var string
 	 */
 	public $key;
 
 	/**
 	 * Key password.
-	 * 
+	 *
 	 * @var string
 	 */
 	public $key_password;
 
 	/**
 	 * Construct SSL context.
-	 * 
+	 *
 	 * @param string $certificate          Certificate.
 	 * @param string $key          Key.
 	 * @param string $key_password Key password.

@@ -8,6 +8,8 @@
  * @package   Pronamic\WordPress\Pay\Gateways\IDeal2
  */
 
+declare(strict_types=1);
+
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 /**
@@ -46,7 +48,7 @@ final class Amount implements RemoteSerializable {
 
 	/**
 	 * From remote object.
-	 * 
+	 *
 	 * @param object $data Data.
 	 * @return self
 	 * @throws \InvalidArgumentException Throws an invalid argument exception if the object does not meet expectations.

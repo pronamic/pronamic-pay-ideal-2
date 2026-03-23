@@ -8,6 +8,8 @@
  * @package   Pronamic\WordPress\Pay\Gateways\IDeal2
  */
 
+declare(strict_types=1);
+
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
 /**
@@ -18,14 +20,14 @@ namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 final class CreateTransactionResponse extends AbstractTransactionResponse {
 	/**
 	 * Links.
-	 * 
+	 *
 	 * @var Links
 	 */
 	public Links $links;
 
 	/**
 	 * Construct create transaction response.
-	 * 
+	 *
 	 * @param string $transaction_id         Transaction ID.
 	 * @param string $created_date_timestamp Created date timestamp.
 	 * @param string $expiry_date_timestamp  Expiry date timestamp.
@@ -63,7 +65,7 @@ final class CreateTransactionResponse extends AbstractTransactionResponse {
 
 	/**
 	 * From remote object..
-	 * 
+	 *
 	 * @param mixed $data Object.
 	 * @return self
 	 * @throws \InvalidArgumentException Throws an invalid argument exception if the JSON does not meet expectations.
