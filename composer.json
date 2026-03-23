@@ -34,7 +34,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Pronamic\\WordPress\\Pay\\Gateways\\IDeal2\\": "src/"
+			"Pronamic\\WordPress\\Pay\\Gateways\\IDeal2\\": "psr-4/"
 		}
 	},
 	"require": {
