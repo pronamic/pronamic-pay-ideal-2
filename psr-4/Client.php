@@ -18,7 +18,7 @@ use Pronamic\WordPress\Http\Response;
 /**
  * Client class
  */
-final class Client {
+final readonly class Client {
 	/**
 	 * Config.
 	 *

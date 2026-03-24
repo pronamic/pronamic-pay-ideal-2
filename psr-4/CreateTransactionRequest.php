@@ -91,7 +91,7 @@ final class CreateTransactionRequest implements RemoteSerializable {
 	 * @var string|null
 	 */
 	#[RemoteApiProperty( 'transactionCallbackUrl' )]
-	public ?string $transaction_callback_url;
+	public ?string $transaction_callback_url = null;
 
 	/**
 	 * Return URL.

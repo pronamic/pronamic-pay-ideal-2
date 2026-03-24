@@ -15,11 +15,12 @@ namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 use Firebase\JWT\JWT;
 use JsonSerializable;
 use OpenSSLAsymmetricKey;
+use Stringable;
 
 /**
  * JSON Web Token class
  */
-final class JsonWebToken implements JsonSerializable {
+final class JsonWebToken implements JsonSerializable, Stringable {
 	/**
 	 * Header.
 	 *
@@ -173,7 +174,7 @@ final class JsonWebToken implements JsonSerializable {
 			throw new \InvalidArgumentException( 'JSON web token does not contain three parts (header, payload and signature).' );
 		}
 
-		list( $header, $payload, $signature ) = $parts;
+		[$header, $payload, $signature] = $parts;
 
 		return new self(
 			\json_decode( \base64_decode( $header ) ),

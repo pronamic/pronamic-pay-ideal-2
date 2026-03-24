@@ -23,7 +23,7 @@ final class GetTransactionResponse extends AbstractTransactionResponse {
 	 *
 	 * @var TransactionStatus|null
 	 */
-	public ?TransactionStatus $status;
+	public ?TransactionStatus $status = null;
 
 	/**
 	 * From remote object.

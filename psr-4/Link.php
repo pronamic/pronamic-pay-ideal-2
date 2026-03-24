@@ -12,12 +12,14 @@ declare(strict_types=1);
 
 namespace Pronamic\WordPress\Pay\Gateways\IDeal2;
 
+use Stringable;
+
 /**
  * Link class
  *
  * @link https://currencenl.atlassian.net/wiki/spaces/IPD/pages/3417538917/iDEAL+-+Merchant+CPSP+API
  */
-final class Link {
+final class Link implements Stringable {
 	/**
 	 * Hypertext reference.
 	 *
@@ -40,7 +42,7 @@ final class Link {
 	 *
 	 * @return string
 	 */
-	public function __toString() {
+	public function __toString(): string {
 		return $this->href;
 	}
 

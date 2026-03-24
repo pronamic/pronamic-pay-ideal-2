@@ -135,7 +135,7 @@ final class Gateway extends PronamicGateway {
 		if ( false !== $result ) {
 			try {
 				$access_token_response = AccessTokenResponse::from_remote_json( $result );
-			} catch ( \Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+			} catch ( \Exception ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 				// No problem, will try to request a new access token.
 			}
 		}

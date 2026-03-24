@@ -144,7 +144,7 @@ final class Config extends GatewayConfig implements JsonSerializable {
 	 */
 	public function jsonSerialize(): object {
 		return (object) [
-			'@type' => __CLASS__,
+			'@type' => self::class,
 		];
 	}
 }

@@ -93,7 +93,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'title'    => \__( 'Acquirer mTLS Certificate', 'pronamic-pay-ideal-2' ),
 			'meta_key' => '_pronamic_gateway_ideal_2_acquirer_mtls_certificate',
 			'type'     => 'file',
-			'callback' => [ $this, 'field_certificate' ],
+			'callback' => $this->field_certificate( ... ),
 		];
 
 		$fields[] = [
@@ -101,7 +101,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'title'    => \__( 'Acquirer mTLS Private Key', 'pronamic-pay-ideal-2' ),
 			'meta_key' => '_pronamic_gateway_ideal_2_acquirer_mtls_private_key',
 			'type'     => 'file',
-			'callback' => [ $this, 'field_private_key' ],
+			'callback' => $this->field_private_key( ... ),
 		];
 
 		$fields[] = [
@@ -110,7 +110,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'meta_key' => '_pronamic_gateway_ideal_2_acquirer_mtls_private_key_password',
 			'type'     => 'text',
 			'classes'  => [ 'code' ],
-			'input'    => [ $this, 'input_password' ],
+			'input'    => $this->input_password( ... ),
 		];
 
 		/**
@@ -121,7 +121,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'title'    => \__( 'Acquirer Signing Certificate', 'pronamic-pay-ideal-2' ),
 			'meta_key' => '_pronamic_gateway_ideal_2_acquirer_signing_certificate',
 			'type'     => 'file',
-			'callback' => [ $this, 'field_certificate' ],
+			'callback' => $this->field_certificate( ... ),
 		];
 
 		$fields[] = [
@@ -129,7 +129,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'title'    => \__( 'Acquirer Signing Private Key', 'pronamic-pay-ideal-2' ),
 			'meta_key' => '_pronamic_gateway_ideal_2_acquirer_signing_private_key',
 			'type'     => 'file',
-			'callback' => [ $this, 'field_private_key' ],
+			'callback' => $this->field_private_key( ... ),
 		];
 
 		$fields[] = [
@@ -138,7 +138,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'meta_key' => '_pronamic_gateway_ideal_2_acquirer_signing_private_key_password',
 			'type'     => 'text',
 			'classes'  => [ 'code' ],
-			'input'    => [ $this, 'input_password' ],
+			'input'    => $this->input_password( ... ),
 		];
 
 		/**
@@ -149,7 +149,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'title'    => \__( 'iDEAL Hub mTLS Certificate', 'pronamic-pay-ideal-2' ),
 			'meta_key' => '_pronamic_gateway_ideal_2_ideal_hub_mtls_certificate',
 			'type'     => 'file',
-			'callback' => [ $this, 'field_certificate' ],
+			'callback' => $this->field_certificate( ... ),
 		];
 
 		$fields[] = [
@@ -157,7 +157,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'title'    => \__( 'iDEAL Hub mTLS Private Key', 'pronamic-pay-ideal-2' ),
 			'meta_key' => '_pronamic_gateway_ideal_2_ideal_hub_mtls_private_key',
 			'type'     => 'file',
-			'callback' => [ $this, 'field_private_key' ],
+			'callback' => $this->field_private_key( ... ),
 		];
 
 		$fields[] = [
@@ -166,7 +166,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'meta_key' => '_pronamic_gateway_ideal_2_ideal_hub_mtls_private_key_password',
 			'type'     => 'text',
 			'classes'  => [ 'code' ],
-			'input'    => [ $this, 'input_password' ],
+			'input'    => $this->input_password( ... ),
 		];
 
 		/**
@@ -177,7 +177,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'title'    => \__( 'iDEAL Hub Signing Certificate', 'pronamic-pay-ideal-2' ),
 			'meta_key' => '_pronamic_gateway_ideal_2_ideal_hub_signing_certificate',
 			'type'     => 'file',
-			'callback' => [ $this, 'field_certificate' ],
+			'callback' => $this->field_certificate( ... ),
 		];
 
 		$fields[] = [
@@ -185,7 +185,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'title'    => \__( 'iDEAL Hub Signing Private Key', 'pronamic-pay-ideal-2' ),
 			'meta_key' => '_pronamic_gateway_ideal_2_ideal_hub_signing_private_key',
 			'type'     => 'file',
-			'callback' => [ $this, 'field_private_key' ],
+			'callback' => $this->field_private_key( ... ),
 		];
 
 		$fields[] = [
@@ -194,7 +194,7 @@ final class Integration extends AbstractGatewayIntegration {
 			'meta_key' => '_pronamic_gateway_ideal_2_ideal_hub_signing_private_key_password',
 			'type'     => 'text',
 			'classes'  => [ 'code' ],
-			'input'    => [ $this, 'input_password' ],
+			'input'    => $this->input_password( ... ),
 		];
 
 		$fields[] = [
