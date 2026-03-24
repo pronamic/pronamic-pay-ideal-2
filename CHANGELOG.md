@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-03-24
+
+### Added
+
+- Added Dutch (nl_NL) translations.
+
+### Changed
+
+- PHP 8.2 is now required.
+- Modernized code with PHP 8.x syntax: `readonly` class properties, `Stringable` interface, first-class callables.
+- Added `declare(strict_types=1)` to all source files.
+- Guarded vendor autoload inclusion with `file_exists` check.
+- Added namespace declaration to the main plugin file.
+- Moved source files from `src/` to `psr-4/` directory.
+- Added Rector for automated code quality analysis.
+- Revamped build and i18n composer scripts.
+
+### Composer
+
+- Changed `firebase/php-jwt` from `^6.10` to `^7.0`.
+- Changed `wp-pay/core` from `^4.26` to `^4.28`.
+- Changed `automattic/jetpack-autoloader` from `v5.0.7` to `v5.0.16`.
+	Release notes: https://github.com/Automattic/jetpack-autoloader/releases/tag/v5.0.16
+- Changed `firebase/php-jwt` from `v6.11.1` to `v7.0.3`.
+	Release notes: https://github.com/firebase/php-jwt/releases/tag/v7.0.3
+- Changed `pronamic/wp-datetime` from `v2.1.8` to `v2.2.0`.
+	Release notes: https://github.com/pronamic/wp-datetime/releases/tag/v2.2.0
+- Changed `pronamic/wp-number` from `v1.3.3` to `v1.4.1`.
+	Release notes: https://github.com/pronamic/wp-number/releases/tag/v1.4.1
+- Changed `pronamic/wp-pay-logos` from `v2.2.3` to `v2.3.2`.
+	Release notes: https://github.com/pronamic/wp-pay-logos/releases/tag/v2.3.2
+- Changed `woocommerce/action-scheduler` from `3.9.2` to `3.9.3`.
+	Release notes: https://github.com/woocommerce/action-scheduler/releases/tag/3.9.3
+- Changed `wp-pay/core` from `v4.26.0` to `v4.32.0`.
+	Release notes: https://github.com/pronamic/wp-pay-core/releases/tag/v4.32.0
+
+Full set of changes: [`1.2.1...1.3.0`][1.3.0]
+
+[1.3.0]: https://github.com/pronamic/pronamic-pay-ideal-2/compare/v1.2.1...v1.3.0
+
 ## [1.2.1] - 2025-06-19
 
 ### Commits
