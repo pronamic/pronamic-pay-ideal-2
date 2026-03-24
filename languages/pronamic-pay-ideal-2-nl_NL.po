@@ -1,235 +1,140 @@
-# Copyright (C) 2024 Pronamic
-# This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
 "Project-Id-Version: Pronamic Pay - Worldline Open Banking - iDEAL 2.0 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pronamic-pay-worldline-open-banking-ideal-2\n"
-"POT-Creation-Date: 2024-03-26T12:46:38+00:00\n"
-"PO-Revision-Date: 2026-03-23 15:19+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-03-26T12:46:38+00:00\n"
+"PO-Revision-Date: 2026-03-24T13:36:50+00:00\n"
+"Language: nl_NL\n"
 "X-Generator: Poedit 3.9\n"
-"X-Domain: pronamic-pay-worldline-open-banking-ideal-2\n"
+"X-Domain: pronamic-pay-ideal-2\n"
 
 #. Plugin Name of the plugin
-#: pronamic-pay-worldline-open-banking-ideal-2.php
-msgid "Pronamic Pay - Worldline Open Banking - iDEAL 2.0"
-msgstr "Pronamic Pay - Worldline Open Banking - iDEAL 2.0"
+#: pronamic-pay-ideal-2.php:11
+msgid "Pronamic Pay - iDEAL 2.0"
+msgstr ""
 
 #. Plugin URI of the plugin
-#: pronamic-pay-worldline-open-banking-ideal-2.php
-msgid "https://wp.pronamic.directory/plugins/pronamic-pay-worldline-open-banking-ideal-2/"
-msgstr "https://wp.pronamic.directory/plugins/pronamic-pay-worldline-open-banking-ideal-2/"
+#: pronamic-pay-ideal-2.php:12
+msgid "https://wp.pronamic.directory/plugins/pronamic-pay-ideal-2/"
+msgstr ""
 
 #. Description of the plugin
-#: pronamic-pay-worldline-open-banking-ideal-2.php
-msgid "This plugin contains the Pronamic Pay integration for the Worldline Open Banking Platform and iDEAL 2.0."
-msgstr "Deze plugin bevat de Pronamic Pay integratie voor het Worldline Open Banking Platform en iDEAL 2.0."
+#: pronamic-pay-ideal-2.php:13
+msgid "This plugin contains the Pronamic Pay integration for iDEAL 2.0."
+msgstr ""
 
 #. Author of the plugin
-#: pronamic-pay-worldline-open-banking-ideal-2.php
+#: pronamic-pay-ideal-2.php:17
 msgid "Pronamic"
 msgstr "Pronamic"
 
 #. Author URI of the plugin
-#: pronamic-pay-worldline-open-banking-ideal-2.php
+#: pronamic-pay-ideal-2.php:18
 msgid "https://www.pronamic.eu/"
 msgstr "https://www.pronamic.nl/"
 
-#: pronamic-pay-worldline-open-banking-ideal-2.php:51
-#: pronamic-pay-worldline-open-banking-ideal-2.php:67
-msgid "BC number"
-msgstr "BC-nummer"
-
-#: pronamic-pay-worldline-open-banking-ideal-2.php:80
-#: pronamic-pay-worldline-open-banking-ideal-2.php:96
-#: pronamic-pay-worldline-open-banking-ideal-2.php:108
-msgid "Dashboard ID"
-msgstr "Dashboard-ID"
-
-#: src/Integration.php:69 src/Integration.php:70
+#: psr-4/Integration.php:49
+#: psr-4/Integration.php:50
 msgid "https://www.ideal.nl/en/"
 msgstr "https://www.ideal.nl/"
 
-#: src/Integration.php:137
-msgid "Initiating Party ID"
-msgstr "Initiërende partij-ID"
+#: psr-4/Integration.php:82
+msgid "Merchant ID"
+msgstr ""
 
-#: src/Integration.php:141
-msgid "The parameter for Initiating Party ID as mentioned in the payment provider dashboard."
-msgstr "De parameter voor initiërende party-ID zoals vermeld in het dashboard van de betalingsprovider."
+#: psr-4/Integration.php:93
+msgid "Acquirer mTLS Certificate"
+msgstr ""
 
-#: src/Integration.php:156 src/Integration.php:162
-msgid "Sub ID"
-msgstr "Sub ID"
+#: psr-4/Integration.php:101
+msgid "Acquirer mTLS Private Key"
+msgstr ""
 
-#: src/Integration.php:163
-msgid "as mentioned in the payment provider dashboard"
-msgstr "zoals vermeld in het dashboard van de betalingsprovider"
+#: psr-4/Integration.php:109
+msgid "Acquirer mTLS Private Key Password"
+msgstr ""
 
-#: src/Integration.php:171
-msgid "Purchase ID"
-msgstr "Aankoop ID"
+#: psr-4/Integration.php:121
+msgid "Acquirer Signing Certificate"
+msgstr ""
 
-#. translators: %s: <code>purchaseID</code>
-#: src/Integration.php:176
+#: psr-4/Integration.php:129
+msgid "Acquirer Signing Private Key"
+msgstr ""
+
+#: psr-4/Integration.php:137
+msgid "Acquirer Signing Private Key Password"
+msgstr ""
+
+#: psr-4/Integration.php:149
+msgid "iDEAL Hub mTLS Certificate"
+msgstr ""
+
+#: psr-4/Integration.php:157
+msgid "iDEAL Hub mTLS Private Key"
+msgstr ""
+
+#: psr-4/Integration.php:165
+msgid "iDEAL Hub mTLS Private Key Password"
+msgstr ""
+
+#: psr-4/Integration.php:177
+msgid "iDEAL Hub Signing Certificate"
+msgstr ""
+
+#: psr-4/Integration.php:185
+msgid "iDEAL Hub Signing Private Key"
+msgstr ""
+
+#: psr-4/Integration.php:193
+msgid "iDEAL Hub Signing Private Key Password"
+msgstr ""
+
+#: psr-4/Integration.php:203
+msgid "Reference"
+msgstr ""
+
+#. translators: %s: <code>reference</code>
+#: psr-4/Integration.php:208
+#, php-format
 msgid "The iDEAL %s parameter."
 msgstr "De iDEAL parameter %s."
 
-#: src/Integration.php:181
+#: psr-4/Integration.php:213
 msgid "Available tags:"
 msgstr "Beschikbare tags:"
 
 #. translators: %s: default code
-#: src/Integration.php:189
+#: psr-4/Integration.php:221
+#, php-format
 msgid "Default: <code>%s</code>"
 msgstr "Standaard: <code>%s</code>"
 
-#: src/Integration.php:203
-msgid "Secret key and certificate"
-msgstr "Geheime sleutel en certificaat"
-
-#: src/Integration.php:213
-msgid "Organization"
-msgstr "Organisatie"
-
-#: src/Integration.php:215
-msgid "Organization name, e.g. Pronamic"
-msgstr "Naam van de organisatie, bijvoorbeeld Pronamic"
-
-#: src/Integration.php:223
-msgid "Organization Unit"
-msgstr "Afdeling"
-
-#: src/Integration.php:225
-msgid "Organization unit, e.g. Administration"
-msgstr "Afdeling, bijvoorbeeld administratie"
-
-#: src/Integration.php:233
-msgid "City"
-msgstr "Plaats"
-
-#: src/Integration.php:235
-msgid "City, e.g. Amsterdam"
-msgstr "Stad, bijvoorbeeld Amsterdam"
-
-#: src/Integration.php:243
-msgid "State / province"
-msgstr "Staat of provincie"
-
-#: src/Integration.php:245
-msgid "State or province, e.g. Friesland"
-msgstr "Staat of provincie, bijvoorbeeld Friesland"
-
-#: src/Integration.php:257
-msgid "Country"
-msgstr "Land"
-
-#: src/Integration.php:261 src/Integration.php:267
-msgid "2 letter country code, e.g."
-msgstr "2 letters landcode, bijvoorbeeld"
-
-#: src/Integration.php:277
-msgid "E-mail address"
-msgstr "E-mailadres"
-
-#. translators: %s: admin email
-#: src/Integration.php:280
-msgid "E-mail address, e.g. %s"
-msgstr "E-mailadres, bijvoorbeeld %s"
-
-#: src/Integration.php:292
-msgid "Number Days Valid"
-msgstr "Aantal dagen geldig"
-
-#: src/Integration.php:295
-msgid "Number of days the generated certificate will be valid for, e.g. 1825 days for the maximum duration of 5 years."
-msgstr "Aantal dagen voor de geldigheid van het certificaat, bijvoorbeeld 1825 dagen voor de maximale duur van 5 jaar."
-
-#: src/Integration.php:303
-msgid "Secret Key Password"
-msgstr "Geheime sleutel wachtwoord"
-
-#: src/Integration.php:307
-msgid "A random password which will be used for the generation of the secret key and certificate."
-msgstr "Een willekeurig wachtwoord dat gebruikt zal worden voor het aanmaken van de geheime sleutel en het certificaat."
-
-#: src/Integration.php:327
-msgid "Private Key"
-msgstr "Privésleutel"
-
-#: src/Integration.php:334
-msgid "The secret key is used for secure communication with the payment provider. If left empty, the secret key will be generated using the given secret key password."
-msgstr "De geheime sleutel wordt gebruikt voor veilige communicatie met de betalingsprovider. Indien leeg gelaten, zal de geheime sleutel aangemaakt worden met het geheime sleutel wachtwoord."
-
-#: src/Integration.php:341
-msgid "Certificate"
-msgstr "Certificaat"
-
-#: src/Integration.php:348
-msgid "The certificate is used for secure communication with the payment provider. If left empty, the certificate will be generated using the secret key and given organization details."
-msgstr "Het certificaat wordt gebruikt voor veilige communicatie met de betalingsprovider. Indien leeg gelaten, zal het certificaat aangemaakt worden met de geheime sleutel en de ingevulde organisatiegegevens."
-
-#: src/Integration.php:370
-msgid "The secret key and certificate have not yet been configured."
-msgstr "De geheime sleutel en het certificaat zijn nog niet ingesteld."
-
-#: src/Integration.php:375
-msgid "A secret key and certificate are required for communication with the payment provider. Enter the organization details from the iDEAL account below to generate these required files."
-msgstr "Een geheime sleutel en certificaat zijn benodigd om met de betalingsprovider te kunnen communiceren. Vul de organisatiegegevens van de iDEAL-aansluiting hieronder in om deze benodigde bestanden aan te maken."
-
-#: src/Integration.php:379
-msgid "A secret key and certificate have been configured. The certificate must be uploaded to the payment provider dashboard to complete configuration."
-msgstr "Een geheime sleutel en certificaat zijn ingesteld. Het certificaat moet geüpload worden in het dashboard van de betalingsprovider om de configuratie te voltooien."
-
-#: src/Integration.php:390
-msgid "Download certificate"
-msgstr "Download certificaat"
-
-#: src/Integration.php:421 src/Integration.php:492
-msgid "ideal.key"
-msgstr "ideal.key"
-
-#: src/Integration.php:431 src/Integration.php:529
-msgid "OpenSSL command"
-msgstr "OpenSSL commando"
-
-#: src/Integration.php:439
-msgid "Leave empty and save the configuration to generate the secret key or view the OpenSSL command."
-msgstr "Laat leeg en bewaar de configuratie om de geheime sleutel aan te maken of het OpenSSL commando te bekijken."
-
-#: src/Integration.php:453 src/Integration.php:581
-msgid "Download"
-msgstr "Download"
-
-#: src/Integration.php:463 src/Integration.php:591
+#: psr-4/Integration.php:266
 msgid "Upload"
 msgstr "Upload"
 
-#: src/Integration.php:493
-msgid "ideal.cer"
-msgstr "ideal.cer"
+#: psr-4/Integration.php:276
+msgid "Download"
+msgstr "Download"
 
-#: src/Integration.php:537
-msgid "Leave empty and save the configuration to generate the certificate or view the OpenSSL command."
-msgstr "Laat leeg en bewaar de configuratie om het certificaat aan te maken of het OpenSSL commando te bekijken."
-
-#: src/Integration.php:549
-msgid "SHA Fingerprint"
-msgstr "SHA vingerafdruk"
-
-#: src/Integration.php:555
+#: psr-4/Integration.php:305
 msgid "M j, Y @ G:i"
 msgstr "j M Y @ G:i"
 
-#: src/Integration.php:558
+#: psr-4/Integration.php:309
+msgid "SHA Fingerprint"
+msgstr "SHA vingerafdruk"
+
+#: psr-4/Integration.php:318
 msgid "Valid From"
 msgstr "Geldig van"
 
-#: src/Integration.php:563
+#: psr-4/Integration.php:327
 msgid "Valid To"
 msgstr "Geldig tot"

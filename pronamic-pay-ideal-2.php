@@ -3,7 +3,7 @@
  * Pronamic Pay - iDEAL 2.0
  *
  * @author    Pronamic
- * @copyright 2024 Pronamic
+ * @copyright 2005-2026 Pronamic
  * @license   GPL-2.0-or-later
  * @package   Pronamic\WordPress\Pay\Gateways\IDeal2
  *
@@ -18,7 +18,7 @@
  * Author URI:        https://www.pronamic.eu/
  * Text Domain:       pronamic-pay-ideal-2
  * Domain Path:       /languages/
- * License:           GPL v2 or later
+ * License:           GPL-2.0-or-later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Update URI:        https://wp.pronamic.directory/plugins/pronamic-pay-ideal-2/
  * GitHub URI:        https://github.com/pronamic/pronamic-pay-ideal-2

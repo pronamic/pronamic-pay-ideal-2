@@ -62,16 +62,14 @@
 		"phpcs": "vendor/bin/phpcs -s -v",
 		"phpstan": "vendor/bin/phpstan analyse --memory-limit=-1",
 		"build": [
-			"rm -rf ./build",
-			"mkdir ./build",
-			"mkdir ./build/stage-1",
-			"mkdir ./build/pronamic-pay-ideal-2",
+			"rm -rf ./build/stage-1",
+			"rm -rf ./build/pronamic-pay-ideal-2/*",
 			"rsync --recursive --verbose --exclude-from=.distignore --exclude=/vendor/ ./ ./build/stage-1/",
 			"composer install --no-dev --prefer-dist --optimize-autoloader --working-dir=./build/stage-1/",
 			"rsync --recursive --verbose --exclude-from=.distignore ./build/stage-1/ ./build/pronamic-pay-ideal-2/",
 			"vendor/bin/wp i18n make-pot ./build/pronamic-pay-ideal-2/",
 			"vendor/bin/wp i18n make-mo ./build/pronamic-pay-ideal-2/languages/",
-			"vendor/bin/wp dist-archive ./build/pronamic-pay-ideal-2/ --plugin-dirname=pronamic-pay-ideal-2"
+			"vendor/bin/wp dist-archive ./build/pronamic-pay-ideal-2/ --plugin-dirname=pronamic-pay-ideal-2 --force"
 		],
 		"dist-archive": "wp dist-archive . --plugin-dirname=pronamic-pay-ideal-2",
 		"make-pot": [
