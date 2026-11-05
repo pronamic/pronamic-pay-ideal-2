@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7beec81a6f5bcf3bcc1abcad28ab13e9",
+    "content-hash": "5ff8b3c9e145da4db2a2deb0bfdbf0b8",
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
@@ -72,24 +72,26 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v7.0.3",
+            "version": "v7.2.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "28aa0694bcfdfa5e2959c394d5a1ee7a5083629e"
+                "url": "https://github.com/googleapis/php-jwt.git",
+                "reference": "0501f5729b9e2448516674aff07c7d1727869b8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/28aa0694bcfdfa5e2959c394d5a1ee7a5083629e",
-                "reference": "28aa0694bcfdfa5e2959c394d5a1ee7a5083629e",
+                "url": "https://api.github.com/repos/googleapis/php-jwt/zipball/0501f5729b9e2448516674aff07c7d1727869b8e",
+                "reference": "0501f5729b9e2448516674aff07c7d1727869b8e",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.0"
             },
             "require-dev": {
-                "guzzlehttp/guzzle": "^7.4",
-                "phpspec/prophecy-phpunit": "^2.0",
+                "guzzlehttp/guzzle": "^7.4||^8.0",
+                "phpfastcache/phpfastcache": "^9.2",
+                "phpseclib/phpseclib": "~3.0",
+                "phpspec/prophecy-phpunit": "^2.2",
                 "phpunit/phpunit": "^9.5",
                 "psr/cache": "^2.0||^3.0",
                 "psr/http-client": "^1.0",
@@ -97,9 +99,18 @@
             },
             "suggest": {
                 "ext-sodium": "Support EdDSA (Ed25519) signatures",
-                "paragonie/sodium_compat": "Support EdDSA (Ed25519) signatures when libsodium is not present"
+                "paragonie/sodium_compat": "Support EdDSA (Ed25519) signatures when libsodium is not present",
+                "phpseclib/phpseclib": "Support PS256 (RSASSA-PSS) signatures"
             },
             "type": "library",
+            "extra": {
+                "component": {
+                    "id": "jwt",
+                    "path": "Jwt",
+                    "entry": "README.md",
+                    "target": "googleapis/php-jwt.git"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Firebase\\JWT\\": "src"
@@ -122,33 +133,34 @@
                 }
             ],
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
-            "homepage": "https://github.com/firebase/php-jwt",
+            "homepage": "https://github.com/googleapis/php-jwt",
             "keywords": [
                 "jwt",
                 "php"
             ],
             "support": {
-                "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v7.0.3"
+                "issues": "https://github.com/googleapis/php-jwt/issues",
+                "source": "https://github.com/googleapis/php-jwt/tree/v7.2.1"
             },
-            "time": "2026-02-25T22:16:40+00:00"
+            "time": "2026-09-28T17:51:46+00:00",
+            "published-time": "2026-09-28T18:08:24+00:00"
         },
         {
             "name": "pronamic/pronamic-wp-updater",
-            "version": "v1.0.3",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pronamic/pronamic-wp-updater.git",
-                "reference": "72eef2dcc45a2ac9a37e27a11a2adc363ca53a72"
+                "reference": "dbede89e7a352fb47e0e83bd05cb604dd7cb1a38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pronamic/pronamic-wp-updater/zipball/72eef2dcc45a2ac9a37e27a11a2adc363ca53a72",
-                "reference": "72eef2dcc45a2ac9a37e27a11a2adc363ca53a72",
+                "url": "https://api.github.com/repos/pronamic/pronamic-wp-updater/zipball/dbede89e7a352fb47e0e83bd05cb604dd7cb1a38",
+                "reference": "dbede89e7a352fb47e0e83bd05cb604dd7cb1a38",
                 "shasum": ""
             },
             "require": {
-                "automattic/jetpack-autoloader": "^3.0 || ^4.0 || ^5.0"
+                "automattic/jetpack-autoloader": "^3.0 || ^4.0 || ^5.0 || ^6.0"
             },
             "require-dev": {
                 "pronamic/pronamic-cli": "^1.1",
@@ -170,9 +182,10 @@
             "description": "This WordPress plugin extends the WordPress update system with updates from Pronamic.",
             "support": {
                 "issues": "https://github.com/pronamic/pronamic-wp-updater/issues",
-                "source": "https://github.com/pronamic/pronamic-wp-updater/tree/v1.0.3"
+                "source": "https://github.com/pronamic/pronamic-wp-updater/tree/v1.0.4"
             },
-            "time": "2025-06-19T12:17:48+00:00"
+            "time": "2026-11-02T14:28:37+00:00",
+            "published-time": "2026-11-02T14:28:42+00:00"
         },
         {
             "name": "pronamic/wp-datetime",
@@ -312,7 +325,8 @@
                 "issues": "https://github.com/pronamic/wp-http/issues",
                 "source": "https://github.com/pronamic/wp-http/tree/v1.2.4"
             },
-            "time": "2024-12-17T12:45:36+00:00"
+            "time": "2024-12-17T12:45:36+00:00",
+            "published-time": "2024-12-17T12:45:43+00:00"
         },
         {
             "name": "pronamic/wp-http-extended-ssl-support",
@@ -357,7 +371,8 @@
                 "issues": "https://github.com/pronamic/wp-http-extended-ssl-support/issues",
                 "source": "https://github.com/pronamic/wp-http-extended-ssl-support/tree/v1.0.0"
             },
-            "time": "2024-09-09T13:56:35+00:00"
+            "time": "2024-09-09T13:56:35+00:00",
+            "published-time": "2024-09-09T13:59:38+00:00"
         },
         {
             "name": "pronamic/wp-money",
@@ -618,16 +633,16 @@
         },
         {
             "name": "wp-pay/core",
-            "version": "v4.32.0",
+            "version": "v4.34.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pronamic/wp-pay-core.git",
-                "reference": "aabfb86ae32e76775cc3a8e43386e4213dec1fd6"
+                "reference": "a72ae8bd1b3fc7353d7e131d26503474960b21d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pronamic/wp-pay-core/zipball/aabfb86ae32e76775cc3a8e43386e4213dec1fd6",
-                "reference": "aabfb86ae32e76775cc3a8e43386e4213dec1fd6",
+                "url": "https://api.github.com/repos/pronamic/wp-pay-core/zipball/a72ae8bd1b3fc7353d7e131d26503474960b21d7",
+                "reference": "a72ae8bd1b3fc7353d7e131d26503474960b21d7",
                 "shasum": ""
             },
             "require": {
@@ -643,7 +658,7 @@
                 "pronamic/wp-number": "^1.3",
                 "pronamic/wp-pay-logos": "^2.3",
                 "viison/address-splitter": "^0.3.4",
-                "woocommerce/action-scheduler": "^3.9"
+                "woocommerce/action-scheduler": "^3.9 || ^4.0"
             },
             "require-dev": {
                 "overtrue/phplint": "^9.6",
@@ -707,7 +722,8 @@
                 "issues": "https://github.com/wp-pay/core/issues",
                 "source": "https://github.com/wp-pay/core"
             },
-            "time": "2026-03-23T08:37:03+00:00"
+            "time": "2026-07-31T12:49:43+00:00",
+            "published-time": "2026-07-31T12:50:27+00:00"
         }
     ],
     "packages-dev": [
@@ -767,23 +783,24 @@
         },
         {
             "name": "automattic/wordbless",
-            "version": "0.6.0",
+            "version": "0.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Automattic/wordbless.git",
-                "reference": "7db3385da450e6568627894fa1a431d68dea1440"
+                "reference": "c4818cae8e7ffe226a81e8028df27d73e39563d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Automattic/wordbless/zipball/7db3385da450e6568627894fa1a431d68dea1440",
-                "reference": "7db3385da450e6568627894fa1a431d68dea1440",
+                "url": "https://api.github.com/repos/Automattic/wordbless/zipball/c4818cae8e7ffe226a81e8028df27d73e39563d4",
+                "reference": "c4818cae8e7ffe226a81e8028df27d73e39563d4",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.24",
-                "roots/wordpress": "^6.6"
+                "roots/wordpress": "^6.6 || ^7.0"
             },
             "require-dev": {
+                "composer/composer": "^2.9",
                 "phpunit/phpunit": "^7.5 || ^9.5",
                 "yoast/phpunit-polyfills": "^1.0"
             },
@@ -806,9 +823,10 @@
             "description": "WorDBless allows you to use WordPress core functions in your PHPUnit tests without having to set up a database and the whole WordPress environment",
             "support": {
                 "issues": "https://github.com/Automattic/wordbless/issues",
-                "source": "https://github.com/Automattic/wordbless/tree/0.6.0"
+                "source": "https://github.com/Automattic/wordbless/tree/0.6.1"
             },
-            "time": "2025-04-22T16:53:18+00:00"
+            "time": "2026-08-18T22:29:19+00:00",
+            "published-time": "2026-08-18T22:31:16+00:00"
         },
         {
             "name": "bamarni/composer-bin-plugin",
@@ -865,7 +883,8 @@
                 "issues": "https://github.com/bamarni/composer-bin-plugin/issues",
                 "source": "https://github.com/bamarni/composer-bin-plugin/tree/1.9.1"
             },
-            "time": "2026-02-04T10:18:12+00:00"
+            "time": "2026-02-04T10:18:12+00:00",
+            "published-time": "2026-02-04T10:45:35+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -2579,15 +2598,16 @@
                 "issues": "https://github.com/phpstan/extension-installer/issues",
                 "source": "https://github.com/phpstan/extension-installer/tree/1.4.3"
             },
-            "time": "2024-09-04T20:21:43+00:00"
+            "time": "2024-09-04T20:21:43+00:00",
+            "published-time": "2024-09-04T20:22:27+00:00"
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.42",
+            "version": "2.3.5",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/1279e1ce86ba768f0780c9d889852b4e02ff40d0",
-                "reference": "1279e1ce86ba768f0780c9d889852b4e02ff40d0",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/645a1bd6bead15fc1b8474137467961d0fa30a79",
+                "reference": "645a1bd6bead15fc1b8474137467961d0fa30a79",
                 "shasum": ""
             },
             "require": {
@@ -2609,6 +2629,17 @@
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ondřej Mirtes"
+                },
+                {
+                    "name": "Markus Staab"
+                },
+                {
+                    "name": "Vincent Langlet"
+                }
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
             "keywords": [
@@ -2632,7 +2663,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-17T14:58:32+00:00"
+            "time": "2026-11-03T12:14:22+00:00",
+            "published-time": "2026-11-03T12:14:36+00:00"
         },
         {
             "name": "pronamic/pronamic-cli",
@@ -2680,7 +2712,9 @@
                 "issues": "https://github.com/pronamic/pronamic-cli/issues",
                 "source": "https://github.com/pronamic/pronamic-cli/tree/v1.1.1"
             },
-            "time": "2024-08-01T14:04:36+00:00"
+            "abandoned": true,
+            "time": "2024-08-01T14:04:36+00:00",
+            "published-time": "2024-08-01T14:05:11+00:00"
         },
         {
             "name": "pronamic/wp-coding-standards",
@@ -2736,7 +2770,8 @@
                 "issues": "https://github.com/pronamic/wp-coding-standards/issues",
                 "source": "https://github.com/pronamic/wp-coding-standards"
             },
-            "time": "2025-08-21T12:38:34+00:00"
+            "time": "2025-08-21T12:38:34+00:00",
+            "published-time": "2025-08-21T12:39:26+00:00"
         },
         {
             "name": "psr/container",
@@ -2916,30 +2951,27 @@
         },
         {
             "name": "rector/rector",
-            "version": "2.3.9",
+            "version": "2.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "917842143fd9f5331a2adefc214b8d7143bd32c4"
+                "reference": "55acbd956d7e3907f7d21aab54edd68a310609e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/917842143fd9f5331a2adefc214b8d7143bd32c4",
-                "reference": "917842143fd9f5331a2adefc214b8d7143bd32c4",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/55acbd956d7e3907f7d21aab54edd68a310609e6",
+                "reference": "55acbd956d7e3907f7d21aab54edd68a310609e6",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4|^8.0",
-                "phpstan/phpstan": "^2.1.40"
+                "phpstan/phpstan": "^2.3.5"
             },
             "conflict": {
                 "rector/rector-doctrine": "*",
                 "rector/rector-downgrade-php": "*",
                 "rector/rector-phpunit": "*",
                 "rector/rector-symfony": "*"
-            },
-            "suggest": {
-                "ext-dom": "To manipulate phpunit.xml via the custom-rule command"
             },
             "bin": [
                 "bin/rector"
@@ -2964,7 +2996,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/2.3.9"
+                "source": "https://github.com/rectorphp/rector/tree/2.8.4"
             },
             "funding": [
                 {
@@ -2972,7 +3004,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-16T09:43:55+00:00"
+            "time": "2026-11-03T18:48:08+00:00",
+            "published-time": "2026-11-03T18:48:15+00:00"
         },
         {
             "name": "roots/wordpress",
@@ -4605,21 +4638,21 @@
         },
         {
             "name": "szepeviktor/phpstan-wordpress",
-            "version": "v2.0.3",
+            "version": "v2.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/szepeviktor/phpstan-wordpress.git",
-                "reference": "aa722f037b2d034828cd6c55ebe9e5c74961927e"
+                "reference": "84577e2ea1e4c2a95537fe5ea2ac8e18f4ceab1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/szepeviktor/phpstan-wordpress/zipball/aa722f037b2d034828cd6c55ebe9e5c74961927e",
-                "reference": "aa722f037b2d034828cd6c55ebe9e5c74961927e",
+                "url": "https://api.github.com/repos/szepeviktor/phpstan-wordpress/zipball/84577e2ea1e4c2a95537fe5ea2ac8e18f4ceab1a",
+                "reference": "84577e2ea1e4c2a95537fe5ea2ac8e18f4ceab1a",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4 || ^8.0",
-                "php-stubs/wordpress-stubs": "^6.6.2",
+                "php-stubs/wordpress-stubs": ">=6.6.2",
                 "phpstan/phpstan": "^2.0"
             },
             "require-dev": {
@@ -4662,9 +4695,10 @@
             ],
             "support": {
                 "issues": "https://github.com/szepeviktor/phpstan-wordpress/issues",
-                "source": "https://github.com/szepeviktor/phpstan-wordpress/tree/v2.0.3"
+                "source": "https://github.com/szepeviktor/phpstan-wordpress/tree/v2.0.4"
             },
-            "time": "2025-09-14T02:58:22+00:00"
+            "time": "2026-05-22T16:22:09+00:00",
+            "published-time": "2026-08-28T06:48:49+00:00"
         },
         {
             "name": "wp-cli/cache-command",
@@ -5152,7 +5186,8 @@
                 "issues": "https://github.com/wp-cli/dist-archive-command/issues",
                 "source": "https://github.com/wp-cli/dist-archive-command/tree/v3.1.0"
             },
-            "time": "2025-11-11T13:30:45+00:00"
+            "time": "2025-11-11T13:30:45+00:00",
+            "published-time": "2025-12-09T15:56:52+00:00"
         },
         {
             "name": "wp-cli/embed-command",
@@ -6933,7 +6968,8 @@
                 "issues": "https://github.com/wp-cli/wp-cli-bundle/issues",
                 "source": "https://github.com/wp-cli/wp-cli-bundle"
             },
-            "time": "2025-05-07T02:15:53+00:00"
+            "time": "2025-05-07T02:15:53+00:00",
+            "published-time": "2025-05-07T02:16:27+00:00"
         },
         {
             "name": "wp-cli/wp-config-transformer",
@@ -7063,5 +7099,5 @@
     "platform-overrides": {
         "php": "8.2"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }
